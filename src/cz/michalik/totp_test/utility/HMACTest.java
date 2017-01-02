@@ -18,7 +18,7 @@ public class HMACTest {
 				};
 		String key = "key";
 		String msg = "The quick brown fox jumps over the lazy dog";
-		assertArrayEquals(expected, new HMAC().setKey(key).setMessage(msg).get());		
+		assertArrayEquals(expected, new HMAC(key.getBytes(),msg.getBytes()).get());		
 	}
 
 }
