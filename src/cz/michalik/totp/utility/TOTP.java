@@ -1,69 +1,86 @@
 package cz.michalik.totp.utility;
 
-import java.time.Instant;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
- * Tøída pro generování TOTP hesla pomocí HOTP algoritmu podle RFC6238 specifikace
+ * TÅ™Ã­da pro generovÃ¡nÃ­ TOTP hesla pomocÃ­ HOTP algoritmu podle RFC6238 specifikace
  * 
- * @author Petr Michalík
+ * @author Petr MichalÃ­k
  * @see HOTP
  * @see <a href="https://tools.ietf.org/html/rfc6238">RFC6238</a>
  * 
  */
 public class TOTP {
-	// Bìnì se hesla generují kadıch 30 sekund
+	// BÄ›Å¾nÄ› se hesla generujÃ­ kaÅ¾dÃ½ch 30 sekund
 	private int step = 30;
-	// Trida pro generovani hesla
+	// TÅ™Ã­da pro generovÃ¡nÃ­ hesla
 	private HOTP hotp;
 	/**
-	 * Vytvoøí novou TOTP tøídu
-	 * @param secret string klíèe
+	 * VytvoÅ™Ã­ novou TOTP tÅ™Ã­du
+	 * @param secret string klÃ­Äe
 	 */
 	public TOTP(String secret){
-		hotp = new HOTP(secret);
+		hotp = new HOTP(secret.getBytes());
 	}
 	/**
-	 * Nastaví poèet èíslic hesla v rozmezí od 6 do 8 èíslic
+	 * NastavÃ­ poÄet ÄÃ­slic hesla v rozmezÃ­ od 6 do 8 ÄÃ­slic
 	 * 
 	 * @param digits
-	 *            poèet èíslic
+	 *            poÄet ÄÃ­slic
 	 * @throws Error
-	 *             špatnı poèet èíslic
+	 *             Å¡patnÃ½ poÄet ÄÃ­slic
 	 */
 	public void setDigits(int digits){
 		hotp.setDigits(digits);
 	}
 	/**
-	 * Nastaví jak èasto se budou hesla generovat 
-	 * @param step poèet vteøin
+	 * NastavÃ­ jak Äasto se budou hesla generovat 
+	 * @param step poÄet vteÅ™in
 	 */
 	public void setStep(int step){
 		this.step = step;
 	}
 	/**
-	 * Vrátí Unix time = poèet vteøin od 1.1.1970
+	 * VrÃ¡tÃ­ Unix time = poÄet vteÅ™in od 1.1.1970
 	 * @return int
 	 */
 	public int getTime(){
-		long timestamp = Instant.now().toEpochMilli()/1000;
+		long timestamp = new Date().getTime() / 1000;
 		if ( timestamp < (long)Integer.MAX_VALUE ) {
 			return (int) timestamp;
 		}else{
-			throw new Error("Èasová hodnota je vìtší ne maximální hodnota integeru");
+			throw new Error("ÄŒasovÃ¡ hodnota je vÄ›tÅ¡Ã­ neÅ¾ maximÃ¡lnÃ­ hodnota integeru");
 		}
 	}
 	/**
-	 * Vrátí TOTP heslo pro aktuální èas
+	 * VrÃ¡tÃ­ TOTP heslo pro aktuÃ¡lnÃ­ Äas
 	 * @return TOTP heslo jako int
 	 */
 	public int get(){
 		hotp.setCounter(getTime()/step);
 		return hotp.get();
 	}
+	/**
+	 * UkÃ¡zka TOTP pro zprÃ¡vu "12345678901234567890"
+	 * @param args
+	 */
 	public static void main(String[] args) {
-		TOTP t = new TOTP("12345678901234567890");
-		int p = t.get();
-		System.out.println(p);
+		// GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ v base32
+		String secret = "12345678901234567890";
+		TOTP t = new TOTP(secret);
+		System.out.printf("%d\n",t.get());
+		while(true){
+			int time = Integer.valueOf(new SimpleDateFormat("ss").format(new Date()));
+			if(time % 30 == 0){
+				System.out.printf("%d\n",t.get());
+			}
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 }

@@ -1,74 +1,102 @@
 package cz.michalik.totp.utility;
 
 /**
- * Tøída pro generování HOTP hesla z HMAC hashe podle RFC4226
+ * TÅ™Ã­da pro generovÃ¡nÃ­ HOTP hesla z HMAC hashe podle RFC4226
  * 
- * @author Petr Michalík
+ * @author Petr MichalÃ­k
  * @see HMAC
  * @see <a href="https://tools.ietf.org/html/rfc4226">RFC4226</a>
  * 
  */
 public class HOTP {
-	private int count;
-	private byte[] counter;
-	// Tajne heslo sdílené mezi klientem a serverem
-	private String secret = null;
-	// Bìžná délka hesla je 6 èíslic
+	// BÄ›Å¾nÄ› se poÄÃ­tÃ¡ heslo od nuly
+	private int count = 0;
+	// PoÄÃ­tadlo je 8-bytovÃ© pole
+	private byte[] counter = new byte[8];
+	// HMAC objekt
+	private HMAC hmac = new HMAC("".getBytes(),counter);
+	// BÄ›Å¾nÃ¡ dÃ©lka hesla je 6 ÄÃ­slic
 	private int digits = 6;
 
 	/**
-	 * Vytvoøí novou HOTP tøídu
+	 * VytvoÅ™Ã­ novou HOTP tÅ™Ã­du
 	 * 
 	 * @param secret
-	 *            string klíèe
+	 *            klÃ­Ä jako byte[]
 	 */
-	public HOTP(String secret) {
-		this.secret = secret;
+	public HOTP(byte[] secret) {
+		hmac.setKey(secret);
 		setCounter(0);
 	}
+	/**
+	 * VytvoÅ™Ã­ novou HOTP tÅ™Ã­du
+	 * pro danou hodnotu poÄÃ­tadla
+	 * 
+	 * @param secret
+	 *            klÃ­Ä jako byte[]
+	 * @param count
+	 *            hodnota poÄÃ­tadla
+	 */
+	public HOTP(byte[] secret, int count) {
+		hmac.setKey(secret);
+		setCounter(count);
+	}
 
 	/**
-	 * Nastaví poèítadlo
+	 * NastavÃ­ sdÃ­lenÃ© heslo
+	 * @param secret heslo
+	 */
+	public void setSecret(byte[] secret){
+		hmac.setKey(secret);
+	}
+	/**
+	 * NastavÃ­ poÄÃ­tadlo
 	 * 
 	 * @param count
-	 *            hodnota poèítadla
+	 *            hodnota poÄÃ­tadla
 	 */
-	public void setCounter(int count) {
-		this.count = count;
-	}
-
-	/**
-	 * Nastaví poèet èíslic hesla v rozmezí od 6 do 8 èíslic
-	 * 
-	 * @param digits
-	 *            poèet èíslic
-	 * @throws Error
-	 *             špatný poèet èíslic
-	 */
-	public void setDigits(int digits) {
-		if (digits >= 6 && digits <= 8) {
-			this.digits = digits;
-		} else {
-			throw new Error("Minimální délka je 6 èislic a maximální délka je 8 èíslic");
-		}
-	}
-
-	/**
-	 * Vypoèítá HOTP heslo pro danou hodnotu poèítadla
-	 * 
-	 * @return HOTP heslo jako int
-	 */
-	public int get() {
-		counter = new byte[8];
-		// Je tøeba z èísla udìlat pole bytù
+	public void setCounter(int c) {
+		count = c;
+		// Je tÅ™eba z ÄÃ­sla udÄ›lat 8-bytovÃ© pole
 		// viz http://stackoverflow.com/questions/9456913/is-this-rfc-4226-wrong
 		for (int i = counter.length - 1; i >= 0; i--) {
 			counter[i] = (byte) count;
 			count >>= 8;
 		}
-		HMAC hmac = new HMAC(secret.getBytes(), counter);
+		hmac.setMessage(counter);
+	}
+
+	/**
+	 * NastavÃ­ poÄet ÄÃ­slic hesla v rozmezÃ­ od 6 do 8 ÄÃ­slic
+	 * 
+	 * @param digits
+	 *            poÄet ÄÃ­slic
+	 * @throws Error
+	 *             Å¡patnÃ½ poÄet ÄÃ­slic
+	 */
+	public void setDigits(int digits) {
+		if (digits >= 6 && digits <= 8) {
+			this.digits = digits;
+		} else {
+			throw new Error("MinimÃ¡lnÃ­ dÃ©lka je 6 Äislic a maximÃ¡lnÃ­ dÃ©lka je 8 ÄÃ­slic");
+		}
+	}
+
+	/**
+	 * NastavÃ­ algoritmus vÃ½poÄtu HMAC hashe
+	 * @param alg algoritmus
+	 */
+	public void setAlgorithm(String alg){
+		hmac.setAlgorithm(alg);
+	}
+	/**
+	 * VypoÄÃ­tÃ¡ HOTP heslo pro danou hodnotu poÄÃ­tadla
+	 * 
+	 * @return HOTP heslo jako int
+	 */
+	public int get() {
 		byte[] hmac_result = hmac.get();
-		// Offset je hodnota posledních 4 bitù z posledního bytu
+		// Offset je hodnota poslednÃ­ch 4 bitÅ¯ z poslednÃ­ho bytu
 		// K rozdeleni pouziju bitovou operaci
 		int offset = hmac_result[hmac_result.length - 1] & 0xf;
 		// Heslo je vytvoreno ze 4 nasledujicich bytu od offsetu
@@ -84,25 +112,26 @@ public class HOTP {
 		Double hotp = bin_code % Math.pow(10, digits);
 		// Z doublu ziskame celociselny integer
 		int pass = hotp.intValue();
-		// Zvýší hodnotu poèítadla - po každém zavolání funkce vrací jinou
+		// ZvÃ½Å¡Ã­ hodnotu poÄÃ­tadla - po kaÅ¾dÃ©m zavolÃ¡nÃ­ funkce vracÃ­ jinou
 		// hodnotu
 		count++;
+		setCounter(count);
 		return pass;
 	}
 
 	/**
-	 * Vypoèítá HOTP heslo a vrátí øetìzec znakù
+	 * VypoÄÃ­tÃ¡ HOTP heslo a vrÃ¡tÃ­ Å™etÄ›zec znakÅ¯
 	 * 
-	 * @return HOTP heslo jako øetìzec znakù
+	 * @return HOTP heslo jako Å™etÄ›zec znakÅ¯
 	 */
 	public String getString() {
 		int hotp = get();
-		return String.format("%6d", hotp);
+		// ÄŒÃ­slo doplnÃ­ zleva nulami 
+		return String.format("%0"+digits+"d", hotp);
 	}
 
 	public static void main(String[] args) {
-		HOTP h = new HOTP("12345678901234567890");
-		int pass = h.get();
-		System.out.printf("HOTP heslo je: %6d", pass);
+		HOTP h = new HOTP("12345678901234567890".getBytes());
+		System.out.printf("HOTP heslo je: %s\n", h.getString());
 	}
 }

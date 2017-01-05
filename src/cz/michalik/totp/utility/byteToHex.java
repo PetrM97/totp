@@ -1,9 +1,9 @@
 package cz.michalik.totp.utility;
 
 /**
- * Tøída pro zobrazení pole bytù jako hexadecimální hodnoty
+ * TÅ™Ã­da pro zobrazenÃ­ pole bytÅ¯ jako hexadecimÃ¡lnÃ­ hodnoty
  * 
- * @author Petr Michalík
+ * @author Petr MichalÃ­k
  */
 public class byteToHex {
 
@@ -11,10 +11,10 @@ public class byteToHex {
 	private String[] res = null;
 
 	/**
-	 * Konstruktor pro pøevod na hexadecimální hodnoty
+	 * Konstruktor pro pÅ™evod na hexadecimÃ¡lnÃ­ hodnoty
 	 * 
 	 * @param bytes
-	 *            pole bytù k pøevodu
+	 *            pole bytÅ¯ k pÅ™evodu
 	 */
 	public byteToHex(byte[] bytes) {
 		this.bytes = bytes;
@@ -22,9 +22,9 @@ public class byteToHex {
 	}
 
 	/**
-	 * Získat pole bytù jako pole hexadecimálních hodnot
+	 * ZÃ­skat pole bytÅ¯ jako pole hexadecimÃ¡lnÃ­ch hodnot
 	 * 
-	 * @return pole s hexadecimálními hodnotami
+	 * @return pole s hexadecimÃ¡lnÃ­mi hodnotami
 	 */
 	public String[] getArray() {
 		return res.clone();
@@ -32,16 +32,17 @@ public class byteToHex {
 	}
 
 	/**
-	 * Získat pole bytù jako hexadecimální øetìzec
+	 * ZÃ­skat pole bytÅ¯ jako hexadecimÃ¡lnÃ­ Å™etÄ›zec
 	 * 
-	 * @return øetìzec s hexadecimálními hodnotami
+	 * @return Å™etÄ›zec s hexadecimÃ¡lnÃ­mi hodnotami
 	 */
 	public String getString() {
 		StringBuilder hex = new StringBuilder();
 		for (String b : res) {
 			hex.append(b);
+			hex.append(" ");
 		}
-		return hex.toString();
+		return hex.toString().trim();
 	}
 
 	private void convert() {

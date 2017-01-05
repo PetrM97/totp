@@ -16,7 +16,7 @@ public class byteToHexTest {
 			};
 	@Test
 	public void testString() {		
-		String expected = "DE7C9B85B8B78AA6BC8A7A36F70A90701C9DB4D9";
+		String expected = "DE 7C 9B 85 B8 B7 8A A6 BC 8A 7A 36 F7 0A 90 70 1C 9D B4 D9";
 		assertEquals(expected, new byteToHex(bytes).getString());		
 	}
 	

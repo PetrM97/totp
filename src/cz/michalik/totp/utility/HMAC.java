@@ -6,25 +6,25 @@ import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
 /**
- * Tøída pro generování HMAC hashe pomocí knihovny javax.crypto.*
+ * TÅ™Ã­da pro generovÃ¡nÃ­ HMAC hashe pomocÃ­ knihovny javax.crypto.*
  *
- * @author Petr Michalík
+ * @author Petr MichalÃ­k
  * @see <a href="https://tools.ietf.org/html/rfc2104">RFC2104</a>
  */
 public class HMAC {
 
 	private byte[] message;
 	private byte[] key;
-	// Nastaven bìnı algoritmus
+	// Nastaven bÄ›Å¾nÃ½ algoritmus
 	private String algorithm = "HmacSHA1";
 
 	/**
-	 * Vytvoøí novou HMAC tøídu a parametry jsou pole bytù
+	 * VytvoÅ™Ã­ novou HMAC tÅ™Ã­du a parametry jsou pole bytÅ¯
 	 * 
 	 * @param key
-	 *            klíè
+	 *            klÃ­Ä
 	 * @param msg
-	 *            zpráva
+	 *            zprÃ¡va
 	 */
 	public HMAC(byte[] key, byte[] msg) {
 		this.message = msg;
@@ -32,7 +32,7 @@ public class HMAC {
 	}
 
 	/**
-	 * Nastaví algoritmus pro HMAC hash
+	 * NastavÃ­ algoritmus pro HMAC hash
 	 * 
 	 * @param alg
 	 *            HMAC algoritmus
@@ -40,11 +40,31 @@ public class HMAC {
 	public void setAlgorithm(String alg) {
 		this.algorithm = alg;
 	}
+	
+	/**
+	 * NastavÃ­ HMAC klÃ­Ä
+	 * 
+	 * @param key klÃ­Ä
+	 */
+	public void setKey(byte[] key) {
+		this.key = key;
+		
+	}
 
 	/**
-	 * Vrátí HMAC hash
+	 * NastavÃ­ HMAC zprÃ¡vu
 	 * 
-	 * @return pole bytù
+	 * @param msg zprÃ¡va
+	 */
+	public void setMessage(byte[] msg) {
+		this.message = msg;
+		
+	}
+
+	/**
+	 * VrÃ¡tÃ­ HMAC hash
+	 * 
+	 * @return pole bytÅ¯
 	 * @throws InvalidKeyException
 	 * @throws NoSuchAlgorithmException
 	 */
@@ -59,15 +79,15 @@ public class HMAC {
 			// HmacSHA1 algoritmus nenalezen
 			e.printStackTrace();
 		} catch (InvalidKeyException e) {
-			// Špatnı klíè
+			// Å patnÃ½ klÃ­Ä
 			e.printStackTrace();
 		}
 		return result.clone();
 	}
-
+	
 	/**
-	 * Ukázková metoda HMAC-SHA1 hashe pro zprávu "The quick brown fox jumps
-	 * over the lazy dog" a klíè "key"
+	 * UkÃ¡zkovÃ¡ metoda HMAC-SHA1 hashe pro zprÃ¡vu "The quick brown fox jumps
+	 * over the lazy dog" a klÃ­Ä "key"
 	 * 
 	 * @param args
 	 */

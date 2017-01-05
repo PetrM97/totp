@@ -68,7 +68,7 @@ public class HOTPTest {
 	}
 	@Test
 	public void pass(){
-		HOTP h = new HOTP(secret);
+		HOTP h = new HOTP(secret.getBytes());
 		h.setCounter(count);
 		int result = h.get();
 		assertEquals(expected,result);
