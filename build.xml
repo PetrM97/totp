@@ -26,6 +26,13 @@
 		</fileset>
 	</path>
 
+	<path id="test.classpath">
+		<pathelement location="${classes.dir}" />
+		<pathelement location="/lib/junit-4.12.jar" />
+		<fileset dir="./lib">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
 
 	<target name="clean">
 		<delete dir="${build.dir}" />
@@ -42,9 +49,10 @@
 	<target name="test" depends="compile">
 		<mkdir dir="${test.report.dir}" />
 		<mkdir dir="${test.report.dir}/xml" />
-		<junit printsummary="on" fork="true" >
+		<junit printsummary="on" fork="true">
 			<classpath refid="classpath.lib" />
 			<formatter type="xml" />
+			<classpath refid="test.classpath" />
 			<batchtest todir="${test.report.dir}/xml">
 				<fileset dir="${classes.dir}">
 					<include name="**/*Test.class" />
