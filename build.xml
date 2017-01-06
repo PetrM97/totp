@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ====================================================================== 
+     6. 1. 2017 16:14:52                                                        
+
+     TOTP    
+     TOTP for Java
+                   
+     Petr Michalík                                                                
+     ====================================================================== -->
+<project name="TOTP" default="main">
+	<description>
+    		TOTP for Java
+    </description>
+
+	<property name="src.dir" value="src" />
+	<property name="build.dir" value="build" />
+	<property name="classes.dir" value="${build.dir}/classes" />
+	<property name="jar.dir" value="${build.dir}/jar" />
+	<property name="main-class" value="cz.michalik.totp.utility.TOTP" />
+	<property name="classpath.jUnit" value="lib/junit-4.1.jar;lib/hamcrest-core-1.3.jar" />
+	<property name="test.report.dir" location="testreport" />
+
+	<path id="classpath.lib">
+		<fileset dir="lib">
+			<include name="*.jar" />
+		</fileset>
+	</path>
+
+
+	<target name="clean">
+		<delete dir="${build.dir}" />
+		<delete dir="${test.report.dir}" />
+	</target>
+
+	<target name="compile">
+		<mkdir dir="${classes.dir}" />
+		<javac srcdir="${src.dir}" destdir="${classes.dir}" includeantruntime="true">
+			<classpath refid="classpath.lib" />
+		</javac>
+	</target>
+
+	<target name="test" depends="compile">
+		<mkdir dir="${test.report.dir}" />
+		<mkdir dir="${test.report.dir}/xml" />
+		<junit printsummary="on" fork="true" >
+			<classpath refid="classpath.lib" />
+			<formatter type="xml" />
+			<batchtest todir="${test.report.dir}/xml">
+				<fileset dir="${classes.dir}">
+					<include name="**/*Test.class" />
+				</fileset>
+			</batchtest>
+		</junit>
+		<junitreport todir="${test.report.dir}">
+			<fileset dir="${test.report.dir}">
+				<include name="TEST-*.xml" />
+			</fileset>
+			<report todir="${test.report.dir}" />
+		</junitreport>
+	</target>
+
+	<target name="jar" depends="compile">
+		<mkdir dir="${jar.dir}" />
+		<jar destfile="${jar.dir}/${ant.project.name}.jar" basedir="${classes.dir}">
+			<manifest>
+				<attribute name="Main-Class" value="${main-class}" />
+			</manifest>
+		</jar>
+	</target>
+
+	<target name="run" depends="jar">
+		<java jar="${jar.dir}/${ant.project.name}.jar" fork="true" />
+	</target>
+
+	<target name="clean-build" depends="clean,jar" />
+
+	<target name="main" depends="clean,run" />
+</project>
