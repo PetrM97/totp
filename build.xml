@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- ====================================================================== 
-     6. 1. 2017 16:14:52                                                        
-
+<!-- ======================================================================                                                 
      TOTP    
-     TOTP for Java
                    
      Petr Michalík                                                                
      ====================================================================== -->
@@ -16,55 +13,65 @@
 	<property name="build.dir" value="build" />
 	<property name="classes.dir" value="${build.dir}/classes" />
 	<property name="jar.dir" value="${build.dir}/jar" />
+	<property name="testreport.dir" location="${build.dir}/testreport" />
+	<property name="doc.dir" location="docs" />
 	<property name="main-class" value="cz.michalik.totp.utility.TOTP" />
-	<property name="classpath.jUnit" value="lib/junit-4.1.jar;lib/hamcrest-core-1.3.jar" />
-	<property name="test.report.dir" location="testreport" />
 
-	<path id="classpath.lib">
-		<fileset dir="lib">
+	<path id="lib.classpath">
+		<fileset dir="./lib">
 			<include name="*.jar" />
 		</fileset>
 	</path>
-
 	<path id="test.classpath">
 		<pathelement location="${classes.dir}" />
-		<pathelement location="/lib/junit-4.12.jar" />
-		<fileset dir="./lib">
-			<include name="**/*.jar" />
-		</fileset>
+		<path refid="lib.classpath" />
 	</path>
 
-	<target name="clean">
+	<target name="clean" depends="clean-build,clean-doc" />
+
+	<target name="clean-build">
 		<delete dir="${build.dir}" />
-		<delete dir="${test.report.dir}" />
+	</target>
+
+	<target name="clean-doc">
+		<delete dir="${doc.dir}" />
 	</target>
 
 	<target name="compile">
 		<mkdir dir="${classes.dir}" />
 		<javac srcdir="${src.dir}" destdir="${classes.dir}" includeantruntime="true">
-			<classpath refid="classpath.lib" />
+			<classpath refid="lib.classpath" />
 		</javac>
 	</target>
 
 	<target name="test" depends="compile">
-		<mkdir dir="${test.report.dir}" />
-		<mkdir dir="${test.report.dir}/xml" />
-		<junit printsummary="on" fork="true">
-			<classpath refid="classpath.lib" />
-			<formatter type="xml" />
+		<delete dir="${testreport.dir}" />
+		<mkdir dir="${testreport.dir}" />
+		<mkdir dir="${testreport.dir}/xml" />
+
+		<junit printsummary="on" fork="true" haltonfailure="true">
 			<classpath refid="test.classpath" />
-			<batchtest todir="${test.report.dir}/xml">
+			<formatter type="xml" />
+			<batchtest todir="${testreport.dir}/xml">
 				<fileset dir="${classes.dir}">
 					<include name="**/*Test.class" />
 				</fileset>
 			</batchtest>
 		</junit>
-		<junitreport todir="${test.report.dir}">
-			<fileset dir="${test.report.dir}">
+
+		<junitreport todir="${testreport.dir}">
+			<fileset dir="${testreport.dir}/xml">
 				<include name="TEST-*.xml" />
 			</fileset>
-			<report todir="${test.report.dir}" />
+			<report todir="${testreport.dir}" />
 		</junitreport>
+	</target>
+
+	<!-- Generate javadocs for current project into ${doc.dir} -->
+	<target name="doc" depends="compile">
+		<delete dir="${doc.dir}" />
+		<mkdir dir="${doc.dir}" />
+		<javadoc sourcepath="${src.dir}" destdir="${doc.dir}" encoding="UTF-8" charset="UTF-8" docencoding="UTF-8" />
 	</target>
 
 	<target name="jar" depends="compile">
@@ -80,7 +87,5 @@
 		<java jar="${jar.dir}/${ant.project.name}.jar" fork="true" />
 	</target>
 
-	<target name="clean-build" depends="clean,jar" />
-
-	<target name="main" depends="clean,run" />
+	<target name="main" depends="clean,test" />
 </project>
