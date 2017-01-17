@@ -27,14 +27,8 @@
 		<path refid="lib.classpath" />
 	</path>
 
-	<target name="clean" depends="clean-build,clean-doc" />
-
-	<target name="clean-build">
+	<target name="clean">
 		<delete dir="${build.dir}" />
-	</target>
-
-	<target name="clean-doc">
-		<delete dir="${doc.dir}" />
 	</target>
 
 	<target name="compile">
@@ -68,8 +62,8 @@
 	</target>
 
 	<!-- Generate javadocs for current project into ${doc.dir} -->
-	<target name="doc" depends="compile">
-		<delete dir="${doc.dir}" />
+	<target name="doc">
+        <delete dir="${doc.dir}" />
 		<mkdir dir="${doc.dir}" />
 		<javadoc sourcepath="${src.dir}" destdir="${doc.dir}" encoding="UTF-8" charset="UTF-8" docencoding="UTF-8" />
 	</target>

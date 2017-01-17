@@ -1,4 +1,19 @@
-package cz.michalik.totp.utility;
+/*
+   Copyright 2017 Petr Michalík
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+*/
+package cz.alej.michalik.totp.utility;
 
 /**
  * Třída pro generování HOTP hesla z HMAC hashe podle RFC4226
@@ -14,7 +29,7 @@ public class HOTP {
 	// Počítadlo je 8-bytové pole
 	private byte[] counter = new byte[8];
 	// HMAC objekt
-	private HMAC hmac = new HMAC("".getBytes(),counter);
+	private HMAC hmac = new HMAC("".getBytes(), counter);
 	// Běžná délka hesla je 6 číslic
 	private int digits = 6;
 
@@ -28,9 +43,9 @@ public class HOTP {
 		hmac.setKey(secret);
 		setCounter(0);
 	}
+
 	/**
-	 * Vytvoří novou HOTP třídu
-	 * pro danou hodnotu počítadla
+	 * Vytvoří novou HOTP třídu pro danou hodnotu počítadla
 	 * 
 	 * @param secret
 	 *            klíč jako byte[]
@@ -44,11 +59,14 @@ public class HOTP {
 
 	/**
 	 * Nastaví sdílené heslo
-	 * @param secret heslo
+	 * 
+	 * @param secret
+	 *            heslo
 	 */
-	public void setSecret(byte[] secret){
+	public void setSecret(byte[] secret) {
 		hmac.setKey(secret);
 	}
+
 	/**
 	 * Nastaví počítadlo
 	 * 
@@ -84,11 +102,14 @@ public class HOTP {
 
 	/**
 	 * Nastaví algoritmus výpočtu HMAC hashe
-	 * @param alg algoritmus
+	 * 
+	 * @param alg
+	 *            algoritmus
 	 */
-	public void setAlgorithm(String alg){
+	public void setAlgorithm(String alg) {
 		hmac.setAlgorithm(alg);
 	}
+
 	/**
 	 * Vypočítá HOTP heslo pro danou hodnotu počítadla
 	 * 
@@ -104,10 +125,8 @@ public class HOTP {
 		// 0xff = 11111111 = 255
 		// Zaroven odstranim hodnotu 1. bitu, ktere urcuje znamenko
 		// bin_code je tedy kladne binarni big-endian cislo tvorene 31 bity
-		int bin_code = (hmac_result[offset] & 0x7f) << 24 
-				| (hmac_result[offset + 1] & 0xff) << 16
-				| (hmac_result[offset + 2] & 0xff) << 8 
-				| (hmac_result[offset + 3] & 0xff);
+		int bin_code = (hmac_result[offset] & 0x7f) << 24 | (hmac_result[offset + 1] & 0xff) << 16
+				| (hmac_result[offset + 2] & 0xff) << 8 | (hmac_result[offset + 3] & 0xff);
 		// HOTP je hodnota po deleni 10^digits - ziskame dany pocet mist
 		Double hotp = bin_code % Math.pow(10, digits);
 		// Z doublu ziskame celociselny integer
@@ -126,8 +145,8 @@ public class HOTP {
 	 */
 	public String getString() {
 		int hotp = get();
-		// Číslo doplní zleva nulami 
-		return String.format("%0"+digits+"d", hotp);
+		// Číslo doplní zleva nulami
+		return String.format("%0" + digits + "d", hotp);
 	}
 
 	public static void main(String[] args) {
