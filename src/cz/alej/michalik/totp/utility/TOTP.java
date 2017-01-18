@@ -18,6 +18,8 @@ package cz.alej.michalik.totp.utility;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.apache.commons.codec.binary.Base32;
+
 /**
  * Třída pro generování TOTP hesla pomocí HOTP algoritmu podle RFC6238
  * specifikace
@@ -32,6 +34,15 @@ public class TOTP {
 	private int step = 30;
 	// Třída pro generování hesla
 	private HOTP hotp = new HOTP();
+	// Časový posun
+	private int t0 = 0;
+
+	/**
+	 * Vytvoří prázdnou TOTP třídu
+	 */
+	public TOTP() {
+
+	}
 
 	/**
 	 * Vytvoří novou TOTP třídu
@@ -39,8 +50,20 @@ public class TOTP {
 	 * @param secret
 	 *            string klíče
 	 */
-	public TOTP(String secret) {
-		hotp = new HOTP(secret.getBytes());
+	public TOTP(byte[] secret) {
+		hotp.setSecret(secret);
+	}
+
+	/**
+	 * Nastaví sdílené heslo
+	 * 
+	 * @param secret
+	 *            heslo jako byte[]
+	 * @return TOTP třída
+	 */
+	public TOTP setSecret(byte[] secret) {
+		hotp.setSecret(secret);
+		return this;
 	}
 
 	/**
@@ -48,11 +71,13 @@ public class TOTP {
 	 * 
 	 * @param digits
 	 *            počet číslic
+	 * @return TOTP třída
 	 * @throws Error
 	 *             špatný počet číslic
 	 */
-	public void setDigits(int digits) {
+	public TOTP setDigits(int digits) {
 		hotp.setDigits(digits);
+		return this;
 	}
 
 	/**
@@ -60,23 +85,45 @@ public class TOTP {
 	 * 
 	 * @param step
 	 *            počet vteřin
+	 * @return TOTP třída
 	 */
-	public void setStep(int step) {
+	public TOTP setStep(int step) {
 		this.step = step;
+		return this;
+	}
+
+	/**
+	 * Nastaví algoritmus výpočtu HMAC hashe
+	 * 
+	 * @param alg
+	 *            algoritmus
+	 * @return TOTP třída
+	 */
+	public TOTP setAlgorithm(String alg) {
+		hotp.setAlgorithm(alg);
+		return this;
+	}
+
+	/**
+	 * Nastaví časový posun
+	 * 
+	 * @param time
+	 *            čas v sekundách
+	 * @return TOTP třída
+	 */
+	public TOTP setShift(int time) {
+		t0 = time;
+		return this;
 	}
 
 	/**
 	 * Vrátí Unix time = počet vteřin od 1.1.1970
 	 * 
-	 * @return int
+	 * @return čas v milisekundách
 	 */
-	public int getTime() {
-		long timestamp = new Date().getTime() / 1000;
-		if (timestamp < Integer.MAX_VALUE) {
-			return (int) timestamp;
-		} else {
-			throw new Error("Časová hodnota je větší než maximální hodnota integeru");
-		}
+	private int getTime() {
+		long timestamp = System.currentTimeMillis() / 1000;
+		return (int) timestamp;
 	}
 
 	/**
@@ -85,24 +132,35 @@ public class TOTP {
 	 * @return TOTP heslo jako int
 	 */
 	public int get() {
-		hotp.setCounter(getTime() / step);
+		hotp.setCounter((int) Math.floor((getTime() - t0) / step));
 		return hotp.get();
 	}
 
 	/**
-	 * Ukázka TOTP pro zprávu "12345678901234567890"
+	 * Vrátí TOTP heslo pro aktuální čas
 	 * 
-	 * @param args
+	 * @return řetězec hesla
+	 */
+	public String toString() {
+		int pass = get();
+		// Číslo doplní zleva nulami
+		return String.format("%0" + hotp.getDigits() + "d", pass);
+	}
+
+	/**
+	 * Ukázka TOTP pro zprávu "12345678901234567890"
 	 */
 	public static void main(String[] args) {
 		// GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ v base32
 		String secret = "12345678901234567890";
-		TOTP t = new TOTP(secret);
-		System.out.printf("%d\n", t.get());
+		System.out.printf("Heslo je: %s \nV Base32 to je: %s\n", secret,
+				new Base32().encodeToString(secret.getBytes()));
+		TOTP t = new TOTP(secret.getBytes());
+		System.out.printf("%s\n", t);
 		while (true) {
 			int time = Integer.valueOf(new SimpleDateFormat("ss").format(new Date()));
 			if (time % 30 == 0) {
-				System.out.printf("%d\n", t.get());
+				System.out.printf("%s\n", t);
 			}
 			try {
 				Thread.sleep(1000);

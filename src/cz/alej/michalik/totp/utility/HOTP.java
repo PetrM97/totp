@@ -26,8 +26,6 @@ package cz.alej.michalik.totp.utility;
 public class HOTP {
 	// Běžně se počítá heslo od nuly
 	private int count = 0;
-	// Počítadlo je 8-bytové pole
-	private byte[] counter = new byte[8];
 	// HMAC objekt
 	private HMAC hmac = new HMAC();
 	// Běžná délka hesla je 6 číslic
@@ -72,9 +70,11 @@ public class HOTP {
 	 * 
 	 * @param secret
 	 *            heslo jako byte[]
+	 * @return HOTP třída
 	 */
-	public void setSecret(byte[] secret) {
+	public HOTP setSecret(byte[] secret) {
 		hmac.setKey(secret);
+		return this;
 	}
 
 	/**
@@ -82,9 +82,12 @@ public class HOTP {
 	 * 
 	 * @param count
 	 *            hodnota počítadla
+	 * @return HOTP třída
 	 */
-	public void setCounter(int c) {
+	public HOTP setCounter(int c) {
 		count = c;
+		// Počítadlo je 8-bytové pole
+		byte[] counter = new byte[8];
 		// Je třeba z čísla udělat 8-bytové pole
 		// viz http://stackoverflow.com/questions/9456913/is-this-rfc-4226-wrong
 		for (int i = counter.length - 1; i >= 0; i--) {
@@ -92,6 +95,7 @@ public class HOTP {
 			count >>= 8;
 		}
 		hmac.setMessage(counter);
+		return this;
 	}
 
 	/**
@@ -99,15 +103,17 @@ public class HOTP {
 	 * 
 	 * @param digits
 	 *            počet číslic
+	 * @return HOTP třída
 	 * @throws Error
 	 *             špatný počet číslic
 	 */
-	public void setDigits(int digits) {
+	public HOTP setDigits(int digits) {
 		if (digits >= 6 && digits <= 8) {
 			this.digits = digits;
 		} else {
 			throw new Error("Minimální délka je 6 čislic a maximální délka je 8 číslic");
 		}
+		return this;
 	}
 
 	/**
@@ -115,9 +121,11 @@ public class HOTP {
 	 * 
 	 * @param alg
 	 *            algoritmus
+	 * @return HOTP třída
 	 */
-	public void setAlgorithm(String alg) {
+	public HOTP setAlgorithm(String alg) {
 		hmac.setAlgorithm(alg);
+		return this;
 	}
 
 	/**
@@ -154,13 +162,17 @@ public class HOTP {
 	 * @return HOTP heslo jako řetězec znaků
 	 */
 	public String toString() {
-		int hotp = get();
+		int pass = get();
 		// Číslo doplní zleva nulami
-		return String.format("%0" + digits + "d", hotp);
+		return String.format("%0" + digits + "d", pass);
 	}
 
 	public static void main(String[] args) {
 		HOTP h = new HOTP("12345678901234567890".getBytes());
 		System.out.printf("HOTP heslo je: %s\n", h);
+	}
+
+	public int getDigits() {
+		return digits;
 	}
 }

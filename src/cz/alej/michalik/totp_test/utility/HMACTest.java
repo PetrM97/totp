@@ -15,8 +15,7 @@
 */
 package cz.alej.michalik.totp_test.utility;
 
-import static org.junit.Assert.assertArrayEquals;
-
+import static org.junit.Assert.*;
 import org.junit.Test;
 
 import cz.alej.michalik.totp.utility.HMAC;
@@ -36,9 +35,9 @@ public class HMACTest {
 	@Test
 	public void emptyString() {
 		try{
-			// TODO
+			new HMAC().get(); 
 		}catch (Exception e) {
-			// TODO: handle exception
+			fail("HMAC with empty string does not work");
 		}
 	}
 
