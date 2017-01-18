@@ -22,29 +22,25 @@ import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
 /**
- * Třída pro generování HMAC hashe pomocí knihovny javax.crypto.*
+ * Fluent interface pro generování HMAC hashe pomocí knihovny javax.crypto.*
  *
  * @author Petr Michalík
  * @see <a href="https://tools.ietf.org/html/rfc2104">RFC2104</a>
  */
 public class HMAC {
 
-	private byte[] message;
-	private byte[] key;
+	private byte[] message = " ".getBytes();
+	private byte[] key = " ".getBytes();
 	// Nastaven běžný algoritmus
 	private String algorithm = "HmacSHA1";
 
 	/**
-	 * Vytvoří novou HMAC třídu a parametry jsou pole bytů
+	 * Vytvoří novou HMAC třídu
 	 * 
-	 * @param key
-	 *            klíč
-	 * @param msg
-	 *            zpráva
+	 * @return vytořená HMAC třída
 	 */
-	public HMAC(byte[] key, byte[] msg) {
-		this.message = msg;
-		this.key = key;
+	public HMAC HMAC() {
+		return this;
 	}
 
 	/**
@@ -52,9 +48,11 @@ public class HMAC {
 	 * 
 	 * @param alg
 	 *            HMAC algoritmus
+	 * @return
 	 */
-	public void setAlgorithm(String alg) {
+	public HMAC setAlgorithm(String alg) {
 		this.algorithm = alg;
+		return this;
 	}
 
 	/**
@@ -62,9 +60,11 @@ public class HMAC {
 	 * 
 	 * @param key
 	 *            klíč
+	 * @return
 	 */
-	public void setKey(byte[] key) {
+	public HMAC setKey(byte[] key) {
 		this.key = key;
+		return this;
 
 	}
 
@@ -73,9 +73,11 @@ public class HMAC {
 	 * 
 	 * @param msg
 	 *            zpráva
+	 * @return
 	 */
-	public void setMessage(byte[] msg) {
+	public HMAC setMessage(byte[] msg) {
 		this.message = msg;
+		return this;
 
 	}
 
@@ -84,7 +86,9 @@ public class HMAC {
 	 * 
 	 * @return pole bytů
 	 * @throws InvalidKeyException
+	 *             špatný klíč
 	 * @throws NoSuchAlgorithmException
+	 *             neexistující algoritmus
 	 */
 	public byte[] get() {
 		byte[] result = null;
@@ -94,7 +98,7 @@ public class HMAC {
 			mac.init(keySpec);
 			result = mac.doFinal(message);
 		} catch (NoSuchAlgorithmException e) {
-			// HmacSHA1 algoritmus nenalezen
+			// algoritmus nenalezen
 			e.printStackTrace();
 		} catch (InvalidKeyException e) {
 			// Špatný klíč
@@ -106,14 +110,12 @@ public class HMAC {
 	/**
 	 * Ukázková metoda HMAC-SHA1 hashe pro zprávu "The quick brown fox jumps
 	 * over the lazy dog" a klíč "key"
-	 * 
-	 * @param args
 	 */
 	public static void main(String[] args) {
-		HMAC h = new HMAC("key".getBytes(), "The quick brown fox jumps over the lazy dog".getBytes());
+		HMAC h = new HMAC().setKey("key".getBytes())
+				.setMessage("The quick brown fox jumps over the lazy dog".getBytes());
 		byte[] bytes = h.get();
-		String hash = new byteToHex(bytes).getString();
-		System.out.println(hash);
+		System.out.println(new byteToHex(bytes));
 	}
 
 }

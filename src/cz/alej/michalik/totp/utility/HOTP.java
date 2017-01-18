@@ -29,15 +29,25 @@ public class HOTP {
 	// Počítadlo je 8-bytové pole
 	private byte[] counter = new byte[8];
 	// HMAC objekt
-	private HMAC hmac = new HMAC("".getBytes(), counter);
+	private HMAC hmac = new HMAC();
 	// Běžná délka hesla je 6 číslic
 	private int digits = 6;
 
 	/**
+	 * Vytvoří prázdnou HOTP třídu
+	 * 
+	 * @param secret
+	 *            heslo jako byte[]
+	 */
+	public HOTP() {
+		setCounter(0);
+	}
+	
+	/**
 	 * Vytvoří novou HOTP třídu
 	 * 
 	 * @param secret
-	 *            klíč jako byte[]
+	 *            heslo jako byte[]
 	 */
 	public HOTP(byte[] secret) {
 		hmac.setKey(secret);
@@ -48,7 +58,7 @@ public class HOTP {
 	 * Vytvoří novou HOTP třídu pro danou hodnotu počítadla
 	 * 
 	 * @param secret
-	 *            klíč jako byte[]
+	 *            heslo jako byte[]
 	 * @param count
 	 *            hodnota počítadla
 	 */
@@ -61,7 +71,7 @@ public class HOTP {
 	 * Nastaví sdílené heslo
 	 * 
 	 * @param secret
-	 *            heslo
+	 *            heslo jako byte[]
 	 */
 	public void setSecret(byte[] secret) {
 		hmac.setKey(secret);
@@ -143,7 +153,7 @@ public class HOTP {
 	 * 
 	 * @return HOTP heslo jako řetězec znaků
 	 */
-	public String getString() {
+	public String toString() {
 		int hotp = get();
 		// Číslo doplní zleva nulami
 		return String.format("%0" + digits + "d", hotp);
@@ -151,6 +161,6 @@ public class HOTP {
 
 	public static void main(String[] args) {
 		HOTP h = new HOTP("12345678901234567890".getBytes());
-		System.out.printf("HOTP heslo je: %s\n", h.getString());
+		System.out.printf("HOTP heslo je: %s\n", h);
 	}
 }

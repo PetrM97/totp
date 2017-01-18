@@ -41,7 +41,7 @@ public class byteToHex {
 	 * 
 	 * @return pole s hexadecimálními hodnotami
 	 */
-	public String[] getArray() {
+	public String[] toArray() {
 		return res.clone();
 
 	}
@@ -51,7 +51,7 @@ public class byteToHex {
 	 * 
 	 * @return řetězec s hexadecimálními hodnotami
 	 */
-	public String getString() {
+	public String toString() {
 		StringBuilder hex = new StringBuilder();
 		for (String b : res) {
 			hex.append(b);

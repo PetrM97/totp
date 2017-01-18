@@ -30,7 +30,16 @@ public class HMACTest {
 				0x1C, (byte) 0x9D, (byte) 0xB4, (byte) 0xD9 };
 		String key = "key";
 		String msg = "The quick brown fox jumps over the lazy dog";
-		assertArrayEquals(expected, new HMAC(key.getBytes(), msg.getBytes()).get());
+		assertArrayEquals(expected, new HMAC().setKey(key.getBytes()).setMessage(msg.getBytes()).get());
+	}
+	
+	@Test
+	public void emptyString() {
+		try{
+			// TODO
+		}catch (Exception e) {
+			// TODO: handle exception
+		}
 	}
 
 }

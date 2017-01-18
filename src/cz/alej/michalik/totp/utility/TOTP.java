@@ -31,7 +31,7 @@ public class TOTP {
 	// Běžně se hesla generují každých 30 sekund
 	private int step = 30;
 	// Třída pro generování hesla
-	private HOTP hotp;
+	private HOTP hotp = new HOTP();
 
 	/**
 	 * Vytvoří novou TOTP třídu
