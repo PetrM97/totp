@@ -4,11 +4,11 @@
                    
      Petr Michalík                                                                
      ====================================================================== -->
-<project name="TOTP" default="main">
+<project name="TOTP" default="main" xmlns:ivy="antlib:org.apache.ivy.ant">
 	<description>
     		TOTP for Java
     </description>
-
+	<!-- Folders -->
 	<property name="src.dir" value="src" />
 	<property name="build.dir" value="build" />
 	<property name="classes.dir" value="${build.dir}/classes" />
@@ -16,29 +16,62 @@
 	<property name="testreport.dir" location="${build.dir}/testreport" />
 	<property name="doc.dir" location="docs" />
 	<property name="main-class" value="cz.michalik.totp.utility.TOTP" />
-
+	<!-- Ivy Settings -->
+	<property name="ivy.install.version" value="2.1.0-rc2" />
+	<property name="ivy.jar.dir" value="${basedir}/lib" />
+	<property name="ivy.jar.file" value="${ivy.jar.dir}/ivy.jar" />
+	<!-- Path including all libraries -->
 	<path id="lib.classpath">
 		<fileset dir="./lib">
 			<include name="*.jar" />
 		</fileset>
 	</path>
+	<!-- Path used for testing - includes own classes -->
 	<path id="test.classpath">
 		<pathelement location="${classes.dir}" />
 		<path refid="lib.classpath" />
 	</path>
-
-	<target name="clean">
+	<!-- -->
+	<target name="clean" depends="clean-build,clean-lib" description="clean everything" />
+	<!-- -->
+	<target name="clean-build" description="clean build directory">
 		<delete dir="${build.dir}" />
 	</target>
+	<!-- -->
+	<target name="clean-lib" description="clean lib directory">
+		<delete dir="${ivy.jar.dir}" />
+	</target>
+	<!-- -->
+	<target name="download-ivy" unless="offline" description="download Apache Ivy">
 
-	<target name="compile">
+		<mkdir dir="${ivy.jar.dir}" />
+		<!-- download Ivy from web site so that it can be used even without any special installation -->
+		<get src="https://repo1.maven.org/maven2/org/apache/ivy/ivy/${ivy.install.version}/ivy-${ivy.install.version}.jar" dest="${ivy.jar.file}" usetimestamp="true" />
+	</target>
+	<!-- -->
+	<target name="init-ivy" depends="download-ivy" description="Initialize Apache Ivy">
+		<!-- try to load ivy here from ivy home, in case the user has not already dropped
+	              it into ant's lib dir (note that the latter copy will always take precedence).
+	              We will not fail as long as local lib dir exists (it may be empty) and
+	              ivy is in at least one of ant's lib dir or the local lib dir. -->
+		<path id="ivy.lib.path">
+			<fileset dir="${ivy.jar.dir}" includes="*.jar" />
+		</path>
+		<taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant" classpathref="ivy.lib.path" />
+	</target>
+	<!-- -->
+	<target name="dependencies" depends="init-ivy" description="retrieve dependencies with ivy">
+		<ivy:retrieve />
+	</target>
+	<!-- -->
+	<target name="compile" depends="dependencies" description="compile all classes">
 		<mkdir dir="${classes.dir}" />
 		<javac srcdir="${src.dir}" destdir="${classes.dir}" includeantruntime="true">
 			<classpath refid="lib.classpath" />
 		</javac>
 	</target>
-
-	<target name="test" depends="compile">
+	<!-- -->
+	<target name="test" depends="compile" description="jUnit tests">
 		<delete dir="${testreport.dir}" />
 		<mkdir dir="${testreport.dir}" />
 		<mkdir dir="${testreport.dir}/xml" />
@@ -60,15 +93,14 @@
 			<report todir="${testreport.dir}" />
 		</junitreport>
 	</target>
-
-	<!-- Generate javadocs for current project into ${doc.dir} -->
-	<target name="doc">
-        <delete dir="${doc.dir}" />
+	<!-- -->
+	<target name="doc" description="generate javadocs">
+		<delete dir="${doc.dir}" />
 		<mkdir dir="${doc.dir}" />
 		<javadoc sourcepath="${src.dir}" destdir="${doc.dir}" encoding="UTF-8" charset="UTF-8" docencoding="UTF-8" />
 	</target>
-
-	<target name="jar" depends="compile">
+	<!-- -->
+	<target name="jar" depends="compile" description="create .jar file">
 		<mkdir dir="${jar.dir}" />
 		<jar destfile="${jar.dir}/${ant.project.name}.jar" basedir="${classes.dir}">
 			<manifest>
@@ -76,10 +108,10 @@
 			</manifest>
 		</jar>
 	</target>
-
-	<target name="run" depends="jar">
+	<!-- -->
+	<target name="run" depends="jar" description="run .jar file">
 		<java jar="${jar.dir}/${ant.project.name}.jar" fork="true" />
 	</target>
-
-	<target name="main" depends="clean,test" />
+	<!-- -->
+	<target name="main" depends="clean,test" description="clean and test" />
 </project>
