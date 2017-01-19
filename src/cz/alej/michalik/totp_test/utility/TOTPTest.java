@@ -32,23 +32,23 @@ public class TOTPTest {
 	@Parameters
 	public static Collection<Object[]> data() {
 		return Arrays.asList(new Object[][] { { 59, 94287082 }, { 1111111109, 7081804 }, { 1111111111, 14050471 },
-				{ 1234567890, 89005924 }, { 2000000000 , 69279037  }, /*{ 20000000000 , 65353130  },*/ });
+				{ 1234567890, 89005924 }, { 2000000000 , 69279037  }, { 20000000000L , 65353130  },});
 	}
 
 	// { 20000000000 , 65353130  } doesn't work -> need Long 
 	
 	private String secret = "12345678901234567890";
-	private int time;
-	private int expected;
+	private long time;
+	private long expected;
 
-	public TOTPTest(int time, int expected) {
+	public TOTPTest(long time, long expected) {
 		this.time = time;
 		this.expected = expected;
 	}
 
 	@Test
 	public void test() {
-		int t0 = (int) (System.currentTimeMillis() / 1000) - this.time;
+		long t0 = (System.currentTimeMillis() / 1000) - this.time;
 		assertEquals(expected, new TOTP().setSecret(secret.getBytes()).setShift(t0).setDigits(8).get());
 	}
 }

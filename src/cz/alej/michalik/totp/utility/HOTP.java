@@ -23,7 +23,7 @@ package cz.alej.michalik.totp.utility;
  * @see <a href="https://tools.ietf.org/html/rfc4226">RFC4226</a>
  * 
  */
-public class HOTP {
+public class HOTP implements OTP {
 	// Běžně se počítá heslo od nuly
 	private int count = 0;
 	// HMAC objekt
@@ -129,6 +129,30 @@ public class HOTP {
 	}
 
 	/**
+	 * Vrátí nastavenou hodnotu počítadla
+	 * @return počítadlo
+	 */
+	public int getCounter() {
+		return count;
+	}
+
+	/**
+	 * Vrátí nastavený počet číslic
+	 * @return počet číslic
+	 */
+	public int getDigits() {
+		return digits;
+	}
+	
+	/**
+	 * Vrátí nastavený algoritmus
+	 * @return algoritmus
+	 */
+	public String getAlgorithm() {
+		return hmac.getAlgorithm();
+	}
+
+	/**
 	 * Vypočítá HOTP heslo pro danou hodnotu počítadla
 	 * 
 	 * @return HOTP heslo jako int
@@ -170,9 +194,5 @@ public class HOTP {
 	public static void main(String[] args) {
 		HOTP h = new HOTP("12345678901234567890".getBytes());
 		System.out.printf("HOTP heslo je: %s\n", h);
-	}
-
-	public int getDigits() {
-		return digits;
 	}
 }

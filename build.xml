@@ -15,7 +15,7 @@
 	<property name="jar.dir" value="${build.dir}/jar" />
 	<property name="testreport.dir" location="${build.dir}/testreport" />
 	<property name="doc.dir" location="docs" />
-	<property name="main-class" value="cz.michalik.totp.utility.TOTP" />
+	<property name="main-class" value="cz.alej.michalik.totp.client.App" />
 	<!-- Ivy Settings -->
 	<property name="ivy.install.version" value="2.1.0-rc2" />
 	<property name="ivy.jar.dir" value="${basedir}/lib" />
@@ -60,11 +60,11 @@
 		<taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant" classpathref="ivy.lib.path" />
 	</target>
 	<!-- -->
-	<target name="dependencies" depends="init-ivy" description="retrieve dependencies with ivy">
+	<target name="depend" depends="init-ivy" description="retrieve dependencies with ivy">
 		<ivy:retrieve />
 	</target>
 	<!-- -->
-	<target name="compile" depends="dependencies" description="compile all classes">
+	<target name="compile" depends="depend" description="compile all classes">
 		<mkdir dir="${classes.dir}" />
 		<javac srcdir="${src.dir}" destdir="${classes.dir}" includeantruntime="true">
 			<classpath refid="lib.classpath" />
@@ -113,5 +113,5 @@
 		<java jar="${jar.dir}/${ant.project.name}.jar" fork="true" />
 	</target>
 	<!-- -->
-	<target name="main" depends="clean,test" description="clean and test" />
+	<target name="main" depends="clean,run" description="clean and test" />
 </project>

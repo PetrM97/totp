@@ -35,12 +35,12 @@ public class HMAC {
 	private String algorithm = "HmacSHA1";
 
 	/**
-	 * Vytvoří novou HMAC třídu
+	 * Vytvoří prázdnou HMAC třídu
 	 * 
 	 * @return vytořená HMAC třída
 	 */
-	public HMAC HMAC() {
-		return this;
+	public HMAC() {
+
 	}
 
 	/**
@@ -79,6 +79,15 @@ public class HMAC {
 		this.message = msg;
 		return this;
 
+	}
+
+	/**
+	 * Vrátí nastavený algoritmus
+	 * 
+	 * @return algoritmus
+	 */
+	public String getAlgorithm() {
+		return algorithm;
 	}
 
 	/**

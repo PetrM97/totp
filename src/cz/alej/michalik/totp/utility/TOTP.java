@@ -29,13 +29,13 @@ import org.apache.commons.codec.binary.Base32;
  * @see <a href="https://tools.ietf.org/html/rfc6238">RFC6238</a>
  * 
  */
-public class TOTP {
+public class TOTP implements OTP {
 	// Běžně se hesla generují každých 30 sekund
 	private int step = 30;
+	// Časový posun
+	private long t0 = 0;
 	// Třída pro generování hesla
 	private HOTP hotp = new HOTP();
-	// Časový posun
-	private int t0 = 0;
 
 	/**
 	 * Vytvoří prázdnou TOTP třídu
@@ -111,19 +111,45 @@ public class TOTP {
 	 *            čas v sekundách
 	 * @return TOTP třída
 	 */
-	public TOTP setShift(int time) {
+	public TOTP setShift(long time) {
 		t0 = time;
 		return this;
 	}
 
 	/**
-	 * Vrátí Unix time = počet vteřin od 1.1.1970
+	 * Vrátí nastavený počet číslic
 	 * 
-	 * @return čas v milisekundách
+	 * @return počet číslic
 	 */
-	private int getTime() {
-		long timestamp = System.currentTimeMillis() / 1000;
-		return (int) timestamp;
+	public int getDigits() {
+		return hotp.getDigits();
+	}
+
+	/**
+	 * Vrátí nastavenou periodu generování hesla
+	 * 
+	 * @return čas v sekundách
+	 */
+	public int getStep() {
+		return step;
+	}
+
+	/**
+	 * Vrátí nastavený algoritmus
+	 * 
+	 * @return algoritmus
+	 */
+	public String getAlgorithm() {
+		return hotp.getAlgorithm();
+	}
+
+	/**
+	 * Vrátí nastavený časový posun
+	 * 
+	 * @return čas v sekundách
+	 */
+	public long getShift() {
+		return t0;
 	}
 
 	/**
@@ -132,7 +158,8 @@ public class TOTP {
 	 * @return TOTP heslo jako int
 	 */
 	public int get() {
-		hotp.setCounter((int) Math.floor((getTime() - t0) / step));
+		long now = System.currentTimeMillis() / 1000;
+		hotp.setCounter((int) Math.floor((now - t0) / step));
 		return hotp.get();
 	}
 
@@ -169,5 +196,4 @@ public class TOTP {
 			}
 		}
 	}
-
 }
