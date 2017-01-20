@@ -23,51 +23,64 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
+
+import org.apache.commons.codec.binary.Base32;
+
 import cz.alej.michalik.totp.utility.TOTP;
 
+/**
+ * Panel pro záznam s TOTP kódem
+ * 
+ * @author Petr Michalík
+ *
+ */
 @SuppressWarnings("serial")
 public class OtpPanel extends JPanel {
+	
+	Clip clip = new Clip();
 
 	public OtpPanel(String raw_data) {
+		// Data jsou oddělena středníkem
 		final String[] data = raw_data.split(";");
-		System.out.printf("0: %s | 1: %s\n", data[0],data[1]);
 		this.setBackground(App.COLOR);
 		this.setLayout(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
 		this.setMaximumSize(new Dimension(Integer.MAX_VALUE, 100));
-		
+
 		JButton passPanel = new JButton("000000");
 		passPanel.setFont(passPanel.getFont().deriveFont(App.FONT_SIZE));
 		passPanel.setBackground(App.COLOR);
+		// Zabere většinu místa
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.weightx = 5;
-		this.add(passPanel,c);
+		this.add(passPanel, c);
 		passPanel.setText(data[0]);
 
 		JButton but = new JButton("Upravit");
 		but.setFont(but.getFont().deriveFont(App.FONT_SIZE));
 		but.setBackground(App.COLOR);
+		// Zabere kousek vpravo
 		c.fill = GridBagConstraints.NONE;
 		c.weightx = 0.5;
 		c.anchor = GridBagConstraints.EAST;
-		this.add(but,c);
-		
-		passPanel.addActionListener(new ActionListener() {			
+		this.add(but, c);
+
+		passPanel.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				System.out.printf("Vygenerovany klic %s zkopirovat do schranky\n", new TOTP(data[1].getBytes()).toString());
-				
+				clip.set(new TOTP(new Base32().decode(data[1].getBytes())).toString());
+				System.out.printf("Kód pro %s je ve schránce\n",data[0]);
 			}
 		});
-		
-		but.addActionListener(new ActionListener() {		
+
+		but.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				System.out.printf("Upravit %s\n",data[0]);
-				
+				System.out.printf("Upravit %s\n", data[0]);
+
 			}
 		});
-		
+
 	}
 
 }

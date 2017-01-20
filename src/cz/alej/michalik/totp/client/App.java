@@ -26,44 +26,58 @@ import java.util.Properties;
 
 import javax.swing.*;
 
+/**
+ * Grafické prostředí pro generování TOTP kódů
+ * 
+ * @author Petr Michalík
+ *
+ */
 public class App {
-	
+
 	private final static String PATH = ".properties";
 	public final static float FONT_SIZE = 64f;
-	public static final Color COLOR = new Color(255,255,255);
+	public static final Color COLOR = new Color(255, 255, 255);
 	private static Properties p = new Properties();
 	private static JFrame window = new JFrame("TOTP");
-	
+
+	/**
+	 * Spustí grafické prostředí
+	 * @param args
+	 */
 	public static void main(String[] args) {
+		// Parametry okna
 		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		window.setMinimumSize(new Dimension(600, 150));
 		window.setLayout(new BoxLayout(window.getContentPane(), BoxLayout.Y_AXIS));
 		window.setLocationByPlatform(true);
-		
+
+		// Načte uložené hodnoty
 		loadProperties();
-		p.setProperty("0", "Test;12345678901234567890");
-		p.setProperty("1", "Heslo;Heslo");
+		p.setProperty("0", "Test;GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ");
+		p.setProperty("1", "Heslo;01234567");
 		saveProperties();
-		
-		window.setVisible(true);
-		
-		for( Object data : p.values() ){
+
+		for (Object data : p.values()) {
+			// Pro každý záznam vytvoří panel
 			window.add(new OtpPanel((String) data));
 			System.out.println(data);
 			window.add(new JSeparator());
 		}
-		
+
+		// Přidá panel pro přidání nových záznamů
 		window.add(new AddPanel());
-		
+		// Vykreslí okno
+		window.setVisible(true);
 		window.pack();
 	}
-	
-	private static void loadProperties(){
-		if( new File(PATH).exists() == false ){
+
+	private static void loadProperties() {
+		// Vytvoří soubor při prvním spuštění
+		if (new File(PATH).exists() == false) {
 			saveProperties();
 		}
 		try {
-			p.load( new FileReader(PATH));
+			p.load(new FileReader(PATH));
 		} catch (FileNotFoundException e) {
 			// Soubor nenalezen
 			e.printStackTrace();
@@ -72,8 +86,8 @@ public class App {
 			e.printStackTrace();
 		}
 	}
-	
-	private static void saveProperties(){
+
+	private static void saveProperties() {
 		try {
 			p.store(new FileWriter(PATH), "TOTP save file");
 		} catch (IOException e) {

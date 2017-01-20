@@ -15,7 +15,6 @@
 */
 package cz.alej.michalik.totp.client;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -25,28 +24,34 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
+/**
+ * Přidá panel s pluskem pro přidání nového záznamu
+ * 
+ * @author Petr Michalík
+ *
+ */
 @SuppressWarnings("serial")
 public class AddPanel extends JPanel {
 
 	public AddPanel() {
-		this.setBackground(new Color(100, 100, 100));
 		this.setLayout(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
 		this.setMaximumSize(new Dimension(Integer.MAX_VALUE, 100));
-		
+
 		JButton plus = new JButton("+");
 		plus.setFont(plus.getFont().deriveFont(App.FONT_SIZE));
 		plus.setBackground(App.COLOR);
 		c.weightx = 1;
+		// Roztáhne prvek na celou šířku
 		c.fill = GridBagConstraints.HORIZONTAL;
 		this.add(plus, c);
-		
+
 		plus.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				System.out.println("Pridat novy zaznam");
-				
+
 			}
 		});
 	}
