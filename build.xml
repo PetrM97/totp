@@ -49,7 +49,7 @@
 		<get src="https://repo1.maven.org/maven2/org/apache/ivy/ivy/${ivy.install.version}/ivy-${ivy.install.version}.jar" dest="${ivy.jar.file}" usetimestamp="true" />
 	</target>
 	<!-- -->
-	<target name="init-ivy" depends="download-ivy" description="Initialize Apache Ivy">
+	<target name="init-ivy" depends="download-ivy" description="initialize Apache Ivy">
 		<!-- try to load ivy here from ivy home, in case the user has not already dropped
 	              it into ant's lib dir (note that the latter copy will always take precedence).
 	              We will not fail as long as local lib dir exists (it may be empty) and
