@@ -34,11 +34,12 @@ import javax.swing.*;
  */
 public class App {
 
-	private final static String PATH = ".properties";
+	private final static String PATH = "client.properties";
 	public final static float FONT_SIZE = 64f;
 	public static final Color COLOR = new Color(255, 255, 255);
 	private static Properties p = new Properties();
 	private static JFrame window = new JFrame("TOTP");
+	private static JPanel mainPanel = new Panel(p);
 
 	/**
 	 * Spustí grafické prostředí
@@ -51,27 +52,21 @@ public class App {
 		window.setLayout(new BoxLayout(window.getContentPane(), BoxLayout.Y_AXIS));
 		window.setLocationByPlatform(true);
 
-		// Načte uložené hodnoty
-		loadProperties();
 		p.setProperty("0", "Test;GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ");
 		p.setProperty("1", "Heslo;01234567");
+		// Načte uložené hodnoty
+		loadProperties();
 		saveProperties();
-
-		for (Object data : p.values()) {
-			// Pro každý záznam vytvoří panel
-			window.add(new OtpPanel((String) data));
-			System.out.println(data);
-			window.add(new JSeparator());
-		}
-
-		// Přidá panel pro přidání nových záznamů
-		window.add(new AddPanel());
+		
 		// Vykreslí okno
 		window.setVisible(true);
 		window.pack();
 	}
 
-	private static void loadProperties() {
+	/**
+	 * Načte nastavení a vykreslí ho do aplikace
+	 */
+	public static void loadProperties() {
 		// Vytvoří soubor při prvním spuštění
 		if (new File(PATH).exists() == false) {
 			saveProperties();
@@ -85,9 +80,17 @@ public class App {
 			// Chyba při načtení
 			e.printStackTrace();
 		}
+		
+		window.remove(mainPanel);
+		mainPanel = new Panel(p);
+		window.add(mainPanel);
+		window.pack();
 	}
 
-	private static void saveProperties() {
+	/**
+	 * Uloží nastavení do souboru
+	 */
+	public static void saveProperties() {
 		try {
 			p.store(new FileWriter(PATH), "TOTP save file");
 		} catch (IOException e) {
