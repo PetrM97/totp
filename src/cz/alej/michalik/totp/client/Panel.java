@@ -15,6 +15,7 @@
 */
 package cz.alej.michalik.totp.client;
 
+import java.util.Map.Entry;
 import java.util.Properties;
 
 import javax.swing.BoxLayout;
@@ -28,10 +29,11 @@ public class Panel extends JPanel {
 		
 		this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		
-		for (Object data : p.values()) {
+		// Pro získání indexu
+		for (Entry<Object, Object> entry : p.entrySet()) {
 			// Pro každý záznam vytvoří panel
-			this.add(new OtpPanel((String) data));
-			System.out.println(data);
+			this.add(new OtpPanel( (String) entry.getValue(), p, Integer.valueOf((String) entry.getKey()) ));
+			System.out.println(entry.getKey() + " | " + entry.getValue());
 			this.add(new JSeparator());
 		}
 		

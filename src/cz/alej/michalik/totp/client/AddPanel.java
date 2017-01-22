@@ -31,6 +31,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import org.apache.commons.codec.binary.Base32;
+
 /**
  * Přidá panel s pluskem pro přidání nového záznamu
  * 
@@ -39,6 +41,8 @@ import javax.swing.JTextField;
  */
 @SuppressWarnings("serial")
 public class AddPanel extends JPanel {
+	
+	private JFrame dialog = new JFrame("Přidat");
 
 	public AddPanel(final Properties prop) {
 		this.setLayout(new GridBagLayout());
@@ -58,7 +62,7 @@ public class AddPanel extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				System.out.println("Pridat novy zaznam");
-				JFrame dialog = new JFrame("Přidat");
+				dialog = new JFrame("Přidat");
 				dialog.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 				dialog.setMinimumSize(new Dimension(600, 150));
 				dialog.setLayout(new BoxLayout(dialog.getContentPane(), BoxLayout.X_AXIS));
@@ -72,6 +76,24 @@ public class AddPanel extends JPanel {
 				dialog.add(secret);
 
 				dialog.setVisible(true);
+				
+				name.addActionListener(new ActionListener() {
+					
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						submit(prop,name,secret);
+						
+					}
+				});
+				
+				secret.addActionListener(new ActionListener() {
+					
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						submit(prop,name,secret);
+						
+					}
+				});
 
 				dialog.addWindowListener(new WindowListener() {
 
@@ -101,20 +123,8 @@ public class AddPanel extends JPanel {
 
 					@Override
 					public void windowClosing(WindowEvent e) {
-						System.out.printf("Jméno: %s | Heslo: %s\n", name.getText(), secret.getText());
-						int id = prop.size();
-						// Po odstranění může být některý index přeskočen
-						while( prop.containsKey(String.valueOf(id))){
-							id++;
-						}
-						StringBuilder sb = new StringBuilder();
-						// Záznam je ve tvaru "jméno;heslo"
-						sb.append(name.getText());
-						sb.append(";");
-						sb.append(secret.getText());
-						prop.setProperty(String.valueOf(id), sb.toString());
-						App.saveProperties();
-						App.loadProperties();
+						// Odeslat
+						submit(prop, name, secret);
 						
 					}
 
@@ -133,6 +143,29 @@ public class AddPanel extends JPanel {
 
 			}
 		});
+	}
+
+	private void submit(final Properties prop, final JTextField name, final JTextField secret) {
+		System.out.printf("Jméno: %s | Heslo: %s\n", name.getText(), secret.getText());
+		if( name.getText().equals("") || secret.getText().equals("")){
+			System.out.println("Nepřidáno");
+		}else{
+			System.out.printf("Base32 heslo je: %s\n",new Base32().encodeToString(secret.getText().getBytes()));
+			int id = prop.size();
+			// Po odstranění může být některý index přeskočen
+			while( prop.containsKey(String.valueOf(id))){
+				id++;
+			}
+			StringBuilder sb = new StringBuilder();
+			// Záznam je ve tvaru "jméno;heslo"
+			sb.append(name.getText());
+			sb.append(";");
+			sb.append(secret.getText());
+			prop.setProperty(String.valueOf(id), sb.toString());
+			App.saveProperties();
+			App.loadProperties();
+		}
+		dialog.dispose();
 	}
 
 }
