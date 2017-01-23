@@ -15,30 +15,51 @@
 */
 package cz.alej.michalik.totp.client;
 
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.util.Map.Entry;
 import java.util.Properties;
 
-import javax.swing.BoxLayout;
 import javax.swing.JPanel;
-import javax.swing.JSeparator;
 
 @SuppressWarnings("serial")
-public class Panel extends JPanel {
+public class MainPanel extends JPanel {
 	
-	public Panel(Properties p){
+	/**
+	 * Přídá hlavní panel
+	 * @param p Properties
+	 */
+	public MainPanel(Properties p){
 		
-		this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+		//this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+		this.setLayout(new GridBagLayout());
+		GridBagConstraints c = new GridBagConstraints();
 		
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.weightx = 1;
+		c.weighty = 0.5;
+		c.insets = new Insets(20, 10, 20, 10);
+		c.gridy = 0;
 		// Pro získání indexu
 		for (Entry<Object, Object> entry : p.entrySet()) {
 			// Pro každý záznam vytvoří panel
-			this.add(new OtpPanel( (String) entry.getValue(), p, Integer.valueOf((String) entry.getKey()) ));
+			this.add(new OtpPanel( (String) entry.getValue(), p, Integer.valueOf((String) entry.getKey()) ),c);
 			System.out.println(entry.getKey() + " | " + entry.getValue());
-			this.add(new JSeparator());
+			c.gridy += 1;
 		}
 		
+		c.fill = GridBagConstraints.VERTICAL;
+		c.weighty = 10;
+		
+		this.add(new JPanel(),c);
+		
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.anchor = GridBagConstraints.SOUTH;
+		c.weighty = 0.5;
+		c.gridy = 99;
 		// Přidá panel pro přidání nových záznamů
-		this.add(new AddPanel(p));
+		this.add(new AddPanel(p),c);
 	
 	}
 

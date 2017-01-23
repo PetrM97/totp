@@ -41,9 +41,15 @@ import org.apache.commons.codec.binary.Base32;
  */
 @SuppressWarnings("serial")
 public class AddPanel extends JPanel {
-	
+
 	private JFrame dialog = new JFrame("Přidat");
 
+	/**
+	 * Konstruktor přidání panelu
+	 * 
+	 * @param prop
+	 *            Properties
+	 */
 	public AddPanel(final Properties prop) {
 		this.setLayout(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
@@ -76,22 +82,22 @@ public class AddPanel extends JPanel {
 				dialog.add(secret);
 
 				dialog.setVisible(true);
-				
+
 				name.addActionListener(new ActionListener() {
-					
+
 					@Override
 					public void actionPerformed(ActionEvent e) {
-						submit(prop,name,secret);
-						
+						submit(prop, name, secret);
+
 					}
 				});
-				
+
 				secret.addActionListener(new ActionListener() {
-					
+
 					@Override
 					public void actionPerformed(ActionEvent e) {
-						submit(prop,name,secret);
-						
+						submit(prop, name, secret);
+
 					}
 				});
 
@@ -125,7 +131,7 @@ public class AddPanel extends JPanel {
 					public void windowClosing(WindowEvent e) {
 						// Odeslat
 						submit(prop, name, secret);
-						
+
 					}
 
 					@Override
@@ -145,15 +151,25 @@ public class AddPanel extends JPanel {
 		});
 	}
 
+	/**
+	 * Odešle nový záznam
+	 * 
+	 * @param prop
+	 *            Properties
+	 * @param name
+	 *            Textové pole s jménem
+	 * @param secret
+	 *            Textové pole s heslem
+	 */
 	private void submit(final Properties prop, final JTextField name, final JTextField secret) {
 		System.out.printf("Jméno: %s | Heslo: %s\n", name.getText(), secret.getText());
-		if( name.getText().equals("") || secret.getText().equals("")){
+		if (name.getText().equals("") || secret.getText().equals("")) {
 			System.out.println("Nepřidáno");
-		}else{
-			System.out.printf("Base32 heslo je: %s\n",new Base32().encodeToString(secret.getText().getBytes()));
+		} else {
+			System.out.printf("Base32 heslo je: %s\n", new Base32().encodeToString(secret.getText().getBytes()));
 			int id = prop.size();
 			// Po odstranění může být některý index přeskočen
-			while( prop.containsKey(String.valueOf(id))){
+			while (prop.containsKey(String.valueOf(id))) {
 				id++;
 			}
 			StringBuilder sb = new StringBuilder();

@@ -35,11 +35,11 @@ import javax.swing.*;
 public class App {
 
 	private final static String PATH = "client.properties";
-	public final static float FONT_SIZE = 64f;
+	public final static float FONT_SIZE = 48f;
 	public static final Color COLOR = new Color(255, 255, 255);
 	private static Properties p = new Properties();
 	private static JFrame window = new JFrame("TOTP");
-	private static JPanel mainPanel = new Panel(p);
+	private static JPanel mainPanel = new MainPanel(p);
 
 	/**
 	 * Spustí grafické prostředí
@@ -82,7 +82,7 @@ public class App {
 		}
 		
 		window.remove(mainPanel);
-		mainPanel = new Panel(p);
+		mainPanel = new MainPanel(p);
 		window.add(mainPanel);
 		window.pack();
 	}

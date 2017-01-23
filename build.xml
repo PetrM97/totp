@@ -66,7 +66,7 @@
 	<!-- -->
 	<target name="compile" depends="depend" description="compile all classes">
 		<mkdir dir="${classes.dir}" />
-		<javac srcdir="${src.dir}" destdir="${classes.dir}" includeantruntime="true">
+		<javac srcdir="${src.dir}" destdir="${classes.dir}" includeantruntime="true" encoding="UTF-8">
 			<classpath refid="lib.classpath" />
 		</javac>
 	</target>
@@ -102,11 +102,15 @@
 	<!-- -->
 	<target name="jar" depends="compile" description="create .jar file">
 		<mkdir dir="${jar.dir}" />
-		<jar destfile="${jar.dir}/${ant.project.name}.jar" basedir="${classes.dir}">
+		<jar destfile="${jar.dir}/${ant.project.name}.jar" basedir="${classes.dir}" encoding="UTF-8">
 			<manifest>
 				<attribute name="Main-Class" value="${main-class}" />
+				<attribute name="Class-Path" value="." />
 			</manifest>
+			<!-- Include libraries -->
+			<zipgroupfileset includes="*.jar" dir="./lib" />
 		</jar>
+		
 	</target>
 	<!-- -->
 	<target name="run" depends="jar" description="run .jar file">

@@ -24,6 +24,7 @@ import java.util.Properties;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
+import javax.swing.Timer;
 
 import org.apache.commons.codec.binary.Base32;
 
@@ -40,7 +41,14 @@ public class OtpPanel extends JPanel {
 
 	Clip clip = new Clip();
 
-	public OtpPanel(String raw_data,final Properties p, final int index) {
+	/**
+	 * Přidá jeden panel se záznamem
+	 * 
+	 * @param raw_data Data z Properties
+	 * @param p Properties
+	 * @param index Index záznamu - pro vymazání
+	 */
+	public OtpPanel(String raw_data, final Properties p, final int index) {
 		// Data jsou oddělena středníkem
 		final String[] data = raw_data.split(";");
 
@@ -49,17 +57,17 @@ public class OtpPanel extends JPanel {
 		GridBagConstraints c = new GridBagConstraints();
 		this.setMaximumSize(new Dimension(Integer.MAX_VALUE, 100));
 
-		JButton passPanel = new JButton("");
+		final JButton passPanel = new JButton("");
 		passPanel.setFont(passPanel.getFont().deriveFont(App.FONT_SIZE));
 		passPanel.setBackground(App.COLOR);
 		// Zabere většinu místa
 		c.fill = GridBagConstraints.HORIZONTAL;
-		c.weightx = 5;
+		c.weightx = 100;
 		this.add(passPanel, c);
 		passPanel.setText(data[0]);
 
 		JButton delete = new JButton("X");
-		delete.setFont(delete.getFont().deriveFont(App.FONT_SIZE*1.5f));
+		delete.setFont(delete.getFont().deriveFont(App.FONT_SIZE));
 		delete.setBackground(App.COLOR);
 		// Zabere kousek vpravo
 		c.fill = GridBagConstraints.NONE;
@@ -72,13 +80,23 @@ public class OtpPanel extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				clip.set(new TOTP(new Base32().decode(data[1].getBytes())).toString());
 				System.out.printf("Kód pro %s je ve schránce\n", data[0]);
+				passPanel.setText("Zkopírováno");
+				// Animace zobrazení zprávy po zkopírování
+				final Timer t = new Timer(1000, new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						passPanel.setText(data[0]);
+					}
+				});
+				t.start();
+				t.setRepeats(false);
 			}
 		});
 
 		delete.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				System.out.printf("Odstraněn %s s indexem %d\n", data[0],index);
+				System.out.printf("Odstraněn %s s indexem %d\n", data[0], index);
 				p.remove(String.valueOf(index));
 				App.saveProperties();
 				App.loadProperties();
