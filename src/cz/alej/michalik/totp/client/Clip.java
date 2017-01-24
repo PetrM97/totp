@@ -73,6 +73,7 @@ public class Clip {
 
 	/**
 	 * Ukázka
+	 * 
 	 * @param args
 	 */
 	public static void main(String[] args) {

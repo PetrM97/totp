@@ -23,44 +23,54 @@ import java.util.Properties;
 
 import javax.swing.JPanel;
 
+/**
+ * Třída pro vytvoření hlavního panelu
+ * 
+ * @author Petr Michalík
+ *
+ */
+
 @SuppressWarnings("serial")
 public class MainPanel extends JPanel {
-	
+
 	/**
 	 * Přídá hlavní panel
-	 * @param p Properties
+	 * 
+	 * @param p
+	 *            Properties
 	 */
-	public MainPanel(Properties p){
-		
-		//this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+	public MainPanel(Properties p) {
+
 		this.setLayout(new GridBagLayout());
+		// Parametry pro jednotlivé panely
 		GridBagConstraints c = new GridBagConstraints();
-		
+
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.weightx = 1;
 		c.weighty = 0.5;
 		c.insets = new Insets(20, 10, 20, 10);
 		c.gridy = 0;
-		// Pro získání indexu
+		// Přidá každý záznam jako samostatný panel
 		for (Entry<Object, Object> entry : p.entrySet()) {
 			// Pro každý záznam vytvoří panel
-			this.add(new OtpPanel( (String) entry.getValue(), p, Integer.valueOf((String) entry.getKey()) ),c);
+			this.add(new OtpPanel((String) entry.getValue(), p, Integer.valueOf((String) entry.getKey())), c);
 			System.out.println(entry.getKey() + " | " + entry.getValue());
 			c.gridy += 1;
 		}
-		
+
+		// Výplň pro nahuštění panelů
 		c.fill = GridBagConstraints.VERTICAL;
 		c.weighty = 10;
-		
-		this.add(new JPanel(),c);
-		
+
+		this.add(new JPanel(), c);
+
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.anchor = GridBagConstraints.SOUTH;
 		c.weighty = 0.5;
 		c.gridy = 99;
 		// Přidá panel pro přidání nových záznamů
-		this.add(new AddPanel(p),c);
-	
+		this.add(new AddPanel(p), c);
+
 	}
 
 }

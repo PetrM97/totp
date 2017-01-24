@@ -52,6 +52,7 @@ public class AddPanel extends JPanel {
 	 */
 	public AddPanel(final Properties prop) {
 		this.setLayout(new GridBagLayout());
+		// Mřížkové rozložení prvků
 		GridBagConstraints c = new GridBagConstraints();
 		this.setMaximumSize(new Dimension(Integer.MAX_VALUE, 100));
 
@@ -63,10 +64,12 @@ public class AddPanel extends JPanel {
 		c.fill = GridBagConstraints.HORIZONTAL;
 		this.add(plus, c);
 
+		// Akce po stisku tlačítka - vytvoří nové okno
 		plus.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				// Okno
 				System.out.println("Pridat novy zaznam");
 				dialog = new JFrame("Přidat");
 				dialog.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
@@ -74,33 +77,31 @@ public class AddPanel extends JPanel {
 				dialog.setLayout(new BoxLayout(dialog.getContentPane(), BoxLayout.X_AXIS));
 				dialog.setLocationByPlatform(true);
 
+				// Pole pro pojmenování záznamu
 				dialog.add(new JLabel("Název: "));
 				final JTextField name = new JTextField();
 				dialog.add(name);
+
+				// Pole pro zadání sdíleného hesla
 				dialog.add(new JLabel("Heslo: "));
 				final JTextField secret = new JTextField();
 				dialog.add(secret);
 
 				dialog.setVisible(true);
 
-				name.addActionListener(new ActionListener() {
-
+				// Akce pro odeslání formuláře
+				ActionListener submit = new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent e) {
 						submit(prop, name, secret);
-
 					}
-				});
+				};
 
-				secret.addActionListener(new ActionListener() {
+				// Při stisku klávesy Enter odešle formulář
+				name.addActionListener(submit);
+				secret.addActionListener(submit);
 
-					@Override
-					public void actionPerformed(ActionEvent e) {
-						submit(prop, name, secret);
-
-					}
-				});
-
+				// Při zavření okna odešle formulář
 				dialog.addWindowListener(new WindowListener() {
 
 					@Override
@@ -146,7 +147,6 @@ public class AddPanel extends JPanel {
 
 					}
 				});
-
 			}
 		});
 	}

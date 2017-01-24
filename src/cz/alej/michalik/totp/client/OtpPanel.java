@@ -44,28 +44,34 @@ public class OtpPanel extends JPanel {
 	/**
 	 * Přidá jeden panel se záznamem
 	 * 
-	 * @param raw_data Data z Properties
-	 * @param p Properties
-	 * @param index Index záznamu - pro vymazání
+	 * @param raw_data
+	 *            Data z Properties
+	 * @param p
+	 *            Properties
+	 * @param index
+	 *            Index záznamu - pro vymazání
 	 */
 	public OtpPanel(String raw_data, final Properties p, final int index) {
 		// Data jsou oddělena středníkem
 		final String[] data = raw_data.split(";");
 
-		this.setBackground(App.COLOR);
+		// this.setBackground(App.COLOR);
 		this.setLayout(new GridBagLayout());
+		// Mřížkové rozložení prvků
 		GridBagConstraints c = new GridBagConstraints();
 		this.setMaximumSize(new Dimension(Integer.MAX_VALUE, 100));
 
+		// Tlačítko pro zkopírování hesla
 		final JButton passPanel = new JButton("");
 		passPanel.setFont(passPanel.getFont().deriveFont(App.FONT_SIZE));
 		passPanel.setBackground(App.COLOR);
-		// Zabere většinu místa
+		// Zabere celou šířku
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.weightx = 100;
 		this.add(passPanel, c);
 		passPanel.setText(data[0]);
 
+		// Tlačítko pro smazání
 		JButton delete = new JButton("X");
 		delete.setFont(delete.getFont().deriveFont(App.FONT_SIZE));
 		delete.setBackground(App.COLOR);
@@ -75,14 +81,17 @@ public class OtpPanel extends JPanel {
 		c.anchor = GridBagConstraints.EAST;
 		this.add(delete, c);
 
+		// Akce pro vytvoření a zkopírování hesla do schránky
 		passPanel.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				clip.set(new TOTP(new Base32().decode(data[1].getBytes())).toString());
 				System.out.printf("Kód pro %s je ve schránce\n", data[0]);
 				passPanel.setText("Zkopírováno");
+				// Zobrazí zprávu na 1 vteřinu
+				int time = 1000;
 				// Animace zobrazení zprávy po zkopírování
-				final Timer t = new Timer(1000, new ActionListener() {
+				final Timer t = new Timer(time, new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent e) {
 						passPanel.setText(data[0]);
@@ -93,6 +102,7 @@ public class OtpPanel extends JPanel {
 			}
 		});
 
+		// Akce pro smazání panelu a uložení změn
 		delete.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {

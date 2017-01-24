@@ -43,6 +43,7 @@ public class App {
 
 	/**
 	 * Spustí grafické prostředí
+	 * 
 	 * @param args
 	 */
 	public static void main(String[] args) {
@@ -52,12 +53,11 @@ public class App {
 		window.setLayout(new BoxLayout(window.getContentPane(), BoxLayout.Y_AXIS));
 		window.setLocationByPlatform(true);
 
-		p.setProperty("0", "Test;GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ");
-		p.setProperty("1", "Heslo;01234567");
+		p.setProperty("-1", "Test;GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ");
 		// Načte uložené hodnoty
 		loadProperties();
 		saveProperties();
-		
+
 		// Vykreslí okno
 		window.setVisible(true);
 		window.pack();
@@ -80,7 +80,7 @@ public class App {
 			// Chyba při načtení
 			e.printStackTrace();
 		}
-		
+
 		window.remove(mainPanel);
 		mainPanel = new MainPanel(p);
 		window.add(mainPanel);
