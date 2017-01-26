@@ -13,5 +13,8 @@
         <!-- https://mvnrepository.com/artifact/org.restlet.jse/org.restlet -->
         <dependency org="org.restlet.jse" name="org.restlet" rev="3.0-M1"/>
 
+        <!-- https://mvnrepository.com/artifact/com.googlecode.json-simple/json-simple -->
+        <dependency org="com.googlecode.json-simple" name="json-simple" rev="1.1.1"/>
+
     </dependencies>
 </ivy-module>
