@@ -15,7 +15,7 @@
 */
 package cz.alej.michalik.totp.client;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.util.Arrays;
 import java.util.List;
@@ -26,8 +26,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
-
-import cz.alej.michalik.totp.client.Clip;
 
 @RunWith(Parameterized.class)
 public class ClipTest {

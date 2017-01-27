@@ -32,19 +32,15 @@
 	</path>
 	<!-- Path used for compiling - includes all classes -->
 	<path id="classes.classpath">
-		<fileset dir="${classes.dir}">
+		<fileset dir="${src.dir}">
 			<include name="**/*.java" />
 		</fileset>
-		<pathelement location="${classes.dir}" />
 		<path refid="lib.classpath" />
 	</path>
-	<!-- Path used for testing - includes test classes -->
+	<!-- Path used for testing - includes test classes & compiled classes -->
 	<path id="test.classpath">
-		<fileset dir="${test.dir}">
-			<include name="**/*.java" />
-		</fileset>
-		<pathelement location="${test.dir}" />
-		<path refid="classes.classpath" />
+		<pathelement location="${build.classes.dir}" />
+		<pathelement location="${build.test.dir}" />
 		<path refid="lib.classpath" />
 	</path>
 
@@ -106,7 +102,7 @@
 			<classpath refid="test.classpath" />
 			<formatter type="xml" />
 			<batchtest todir="${testreport.dir}/xml">
-				<fileset dir="${test.dir}">
+				<fileset dir="${build.test.dir}">
 					<include name="**/*Test.class" />
 				</fileset>
 			</batchtest>
@@ -123,7 +119,7 @@
 	<target name="doc" description="generate javadocs">
 		<delete dir="${doc.dir}" />
 		<mkdir dir="${doc.dir}" />
-		<javadoc sourcepath="${classes.dir}" destdir="${doc.dir}" encoding="UTF-8" charset="UTF-8" docencoding="UTF-8" />
+		<javadoc sourcepath="${classes.dir}" destdir="${doc.dir}" encoding="UTF-8" charset="UTF-8" docencoding="UTF-8" classpath="${lib.dir}/*" />
 	</target>
 
 	<target name="jar" depends="compile" description="create .jar file">
