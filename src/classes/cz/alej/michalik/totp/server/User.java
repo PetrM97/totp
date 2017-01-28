@@ -15,6 +15,7 @@
 */
 package cz.alej.michalik.totp.server;
 
+import org.json.simple.JSONObject;
 import org.restlet.resource.Get;
 import org.restlet.resource.ServerResource;
 
@@ -26,9 +27,12 @@ public class User extends ServerResource {
 		this.user = getAttribute("id");
 	}
 
-	@Get("txt")
+	@Get
 	public String getUser() {
-		return "Returning info about " + this.user;
+		JSONObject msg = new JSONObject();
+		msg.put("status", "ok");
+		msg.put("secret", Data.get(user));
+		return msg.toJSONString();
 	}
 
 }

@@ -32,8 +32,8 @@ public class Serve {
 
 	public static Restlet createInboundRoot() {
 		Router router = new Router();
-		router.attach("/user", Users.class);
-		router.attach("/user/{id}", User.class);
+		router.attach("/users", Users.class);
+		router.attach("/users/{id}", User.class);
 
 		return router;
 	}

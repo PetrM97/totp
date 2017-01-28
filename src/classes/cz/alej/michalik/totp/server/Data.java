@@ -54,6 +54,7 @@ public class Data {
 	}
 
 	public static int add(String data) {
+		load();
 		int index = 0;
 		while (p.containsKey(String.valueOf(index))) {
 			index++;
@@ -61,5 +62,20 @@ public class Data {
 		p.put(String.valueOf(index), data);
 		save();
 		return index;
+	}
+
+	public static String get(String user) {
+		load();
+		return p.getProperty(user);
+	}
+
+	public static void remove(int index) {
+		p.remove(String.valueOf(index));
+		save();
+	}
+
+	public static void deleteAll() {
+		p = new Properties();
+		save();
 	}
 }
