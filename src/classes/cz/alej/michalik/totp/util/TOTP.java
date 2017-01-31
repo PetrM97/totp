@@ -111,7 +111,7 @@ public class TOTP implements OTP {
 	 *            čas v sekundách
 	 * @return TOTP třída
 	 */
-	public TOTP setShift(long time) {
+	public TOTP setCounter(long time) {
 		t0 = time;
 		return this;
 	}

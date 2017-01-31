@@ -33,29 +33,54 @@ public class Users extends ServerResource {
 	Properties p = Data.load();
 	String user = null;
 
-	public void doInit() {
-		this.user = getAttribute("user");
-	}
-
-	@Get("txt")
-	public String getUsers() {
-		return "Returning info about all users";
-	}
-
 	/**
 	 * Vytvoří nový záznam a vrátí index záznamu a klíč
 	 * 
-	 * @return
+	 * @return JSON
 	 */
 	@Post
-	public String create() {
-		String secret = generateSecret();
-		int key = Data.add(secret);
-		this.setStatus(new Status(201));
+	public String create(String user) {
+		// Zpráva pro klienta je JSON
 		JSONObject msg = new JSONObject();
+		// Pokud se status nezmění, nastala chyba
+		this.setStatus(new Status(400));
+		msg.put("status", "error");
+		// Uživatelské jméno smí obsahovat pouze písmena, čísla nebo podtržítka
+		if (user.matches("^user=[a-zA-Z0-9_]+$") == false) {
+			this.setStatus(new Status(400));
+			msg.put("message", "Data should be 'user=[username]'");
+		} else {
+			// Získám uživatelské jméno
+			user = user.replace("user=", "");
+			// Vygeneruju pseudonáhodné heslo
+			String secret = generateSecret();
+			// Pokud existuje uživatelské jméno
+			if (!Data.add(user, secret, false)) {
+				this.setStatus(new Status(409));
+				msg.put("message", "Username already exists");
+			} else {
+				this.setStatus(new Status(201));
+				msg.put("status", "ok");
+				msg.put("username", user);
+				msg.put("secret", secret);
+			}
+		}
+		return msg.toJSONString();
+	}
+
+	/**
+	 * Vrátí počet uživatelů
+	 * 
+	 * @return JSON
+	 */
+	@Get
+	public String getUsers() {
+		// Zpráva pro klienta je JSON
+		JSONObject msg = new JSONObject();
+		this.setStatus(new Status(200));
+		p = Data.load();
 		msg.put("status", "ok");
-		msg.put("key", key);
-		msg.put("secret", secret);
+		msg.put("users", String.valueOf(p.size()));
 		return msg.toJSONString();
 	}
 
@@ -75,9 +100,9 @@ public class Users extends ServerResource {
 	 * 
 	 * @return base32 řetězec
 	 */
-	private String generateSecret() {
+	public static String generateSecret() {
 		// Chci klíč o velikosti 20 bytů
-		int maxBits = 159;
+		int maxBits = 20 * 8 - 1;
 		SecureRandom rand = new SecureRandom();
 		byte[] val = new BigInteger(maxBits, rand).toByteArray();
 		return new Base32().encodeToString(val);

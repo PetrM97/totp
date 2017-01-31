@@ -4,7 +4,7 @@ public class OTPFactory {
 
 	// Výchozí hodnoty
 	int digits = 6;
-	String alg = "SHA-1";
+	String alg = "HmacSHA1";
 
 	public OTP getOTP(String otpType, byte[] secret) {
 		if (otpType.equalsIgnoreCase("TOTP")) {

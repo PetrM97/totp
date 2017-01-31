@@ -84,8 +84,8 @@ public class HOTP implements OTP {
 	 *            hodnota počítadla
 	 * @return HOTP třída
 	 */
-	public HOTP setCounter(int c) {
-		count = c;
+	public HOTP setCounter(long c) {
+		count = (int) c;
 		// Počítadlo je 8-bytové pole
 		byte[] counter = new byte[8];
 		// Je třeba z čísla udělat 8-bytové pole

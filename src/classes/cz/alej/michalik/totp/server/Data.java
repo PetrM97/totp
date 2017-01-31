@@ -27,6 +27,11 @@ public class Data {
 	static Properties p = new Properties();
 	final static String PATH = "server.properties";
 
+	/**
+	 * Načte nastavení ze souboru
+	 * 
+	 * @return Properties
+	 */
 	public static Properties load() {
 		// Vytvoří soubor při prvním spuštění
 		if (new File(PATH).exists() == false) {
@@ -38,9 +43,14 @@ public class Data {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		// Demo ukázka
+		p.put("demo", "GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ");
 		return p;
 	}
 
+	/**
+	 * Uloží nastavení do souboru
+	 */
 	public static void save() {
 		try {
 			p.store(new FileWriter(PATH), "TOTP server data");
@@ -53,29 +63,71 @@ public class Data {
 		}
 	}
 
-	public static int add(String data) {
+	/**
+	 * Přidá uživatele
+	 * 
+	 * @param key
+	 *            unikátní uživatelské jméno
+	 * @param data
+	 *            TOTP sdílené heslo
+	 * @param rewrite
+	 *            zda má přepsat data existujícího uživatele
+	 * @return jestli se data zapsala
+	 */
+	public static boolean add(String key, String data, boolean rewrite) {
 		load();
-		int index = 0;
-		while (p.containsKey(String.valueOf(index))) {
-			index++;
+		if (p.containsKey(key) && !rewrite) {
+			// Nepřepíše současný záznam
+			return false;
 		}
-		p.put(String.valueOf(index), data);
+		p.put(key, data);
 		save();
-		return index;
+		return true;
 	}
 
+	/**
+	 * Získá data uživatele
+	 * 
+	 * @param user
+	 *            uživatelské jméno
+	 * @return sdílené heslo
+	 */
 	public static String get(String user) {
 		load();
 		return p.getProperty(user);
 	}
 
-	public static void remove(int index) {
-		p.remove(String.valueOf(index));
+	/**
+	 * Smaže uživatele
+	 * 
+	 * @param user
+	 *            uživatelské jméno
+	 */
+	public static void remove(String user) {
+		p.remove(user);
 		save();
 	}
 
+	/**
+	 * Smaže vše
+	 */
 	public static void deleteAll() {
 		p = new Properties();
 		save();
+	}
+
+	/**
+	 * Zjistí jestli uživatel existuje
+	 * 
+	 * @param user
+	 *            uživatelské jméno
+	 * @return boolean
+	 */
+	public static boolean exists(String user) {
+		load();
+		if (p.containsKey(user)) {
+			return true;
+		}
+		return false;
 	}
 }

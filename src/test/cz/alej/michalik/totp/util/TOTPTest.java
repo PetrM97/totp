@@ -15,7 +15,7 @@
 */
 package cz.alej.michalik.totp.util;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -47,6 +47,6 @@ public class TOTPTest {
 	@Test
 	public void test() {
 		long t0 = (System.currentTimeMillis() / 1000) - this.time;
-		assertEquals(expected, new TOTP().setSecret(secret.getBytes()).setShift(t0).setDigits(8).get());
+		assertEquals(expected, new TOTP().setSecret(secret.getBytes()).setCounter(t0).setDigits(8).get());
 	}
 }

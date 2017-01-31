@@ -32,4 +32,6 @@ public interface OTP {
 
 	public String toString();
 
+	public Object setCounter(long i);
+
 }
