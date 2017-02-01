@@ -20,16 +20,39 @@ import org.restlet.Restlet;
 import org.restlet.data.Protocol;
 import org.restlet.routing.Router;
 
+/**
+ * Server imlementující REST API
+ * 
+ * @author Petr Michalík
+ *
+ */
 public class Serve {
 
+	private static int port = 8080;
+
+	/**
+	 * Vytvoří nový server
+	 * 
+	 * @param args
+	 * @throws Exception
+	 */
 	public static void main(String[] args) throws Exception {
+		// Nastaví případně port
+		if (args.length > 0) {
+			port = Integer.valueOf(args[0]);
+		}
 		Component c = new Component();
-		c.getServers().add(Protocol.HTTP, 8080);
+		c.getServers().add(Protocol.HTTP, port);
 		c.getDefaultHost().attach("", createInboundRoot());
 
 		c.start();
 	}
 
+	/**
+	 * Nastaví metody pro zpracování HTTP požadavků
+	 * 
+	 * @return router
+	 */
 	public static Restlet createInboundRoot() {
 		Router router = new Router();
 		router.attach("/users", Users.class);

@@ -30,10 +30,19 @@ import org.restlet.resource.ServerResource;
 
 import cz.alej.michalik.totp.util.OTPFactory;
 
+/**
+ * Správa jednotlivého uživatele
+ * 
+ * @author Petr Michalík
+ *
+ */
 public class User extends ServerResource {
 
 	String user;
 
+	/**
+	 * Získá uživatelské jméno obsažené v URI
+	 */
 	public void doInit() {
 		this.user = getAttribute("id");
 		if (!Data.exists(user)) {
@@ -41,6 +50,13 @@ public class User extends ServerResource {
 		}
 	}
 
+	/**
+	 * Ověří TOTP kód
+	 * 
+	 * @param pass
+	 *            TOTP heslo poslané pomocí POST
+	 * @return JSON
+	 */
 	@Post
 	public String validate(String pass) {
 		// Odpoved
@@ -66,6 +82,15 @@ public class User extends ServerResource {
 
 	}
 
+	/**
+	 * Vygeneruje všechny kódy v určitém časovém rozsahu
+	 * 
+	 * @param secret
+	 *            sdílené heslo
+	 * @param window
+	 *            časový rozsah
+	 * @return List hesel
+	 */
 	private List<String> getAllCodes(byte[] secret, int window) {
 		List<String> codes = new LinkedList<String>();
 		for (int i = -window; i <= window; i++) {
@@ -75,6 +100,11 @@ public class User extends ServerResource {
 		return codes;
 	}
 
+	/**
+	 * Informace o uživateli
+	 * 
+	 * @return JSON
+	 */
 	@Get
 	public String getUser() {
 		JSONObject msg = new JSONObject();
@@ -88,6 +118,11 @@ public class User extends ServerResource {
 		return msg.toJSONString();
 	}
 
+	/**
+	 * Vygeneruje nové heslo pro stávajícího uživatele
+	 * 
+	 * @return JSON
+	 */
 	@Put
 	public String update() {
 		JSONObject msg = new JSONObject();
@@ -99,10 +134,14 @@ public class User extends ServerResource {
 			msg.put("status", "ok");
 			msg.put("secret", secret);
 			this.setStatus(new Status(201));
+			this.setLocationRef("./" + user);
 		}
 		return msg.toJSONString();
 	}
 
+	/**
+	 * Vymaže uživatele
+	 */
 	@Delete
 	public StringRepresentation delete() {
 		JSONObject msg = new JSONObject();

@@ -28,6 +28,13 @@ import org.restlet.resource.Get;
 import org.restlet.resource.Post;
 import org.restlet.resource.ServerResource;
 
+/**
+ * Třída pro správu databáze uživatelů
+ * 
+ * @author Petr Michalík
+ * @see org.restlet.resource.ServerResource
+ *
+ */
 public class Users extends ServerResource {
 
 	Properties p = Data.load();
@@ -45,13 +52,13 @@ public class Users extends ServerResource {
 		// Pokud se status nezmění, nastala chyba
 		this.setStatus(new Status(400));
 		msg.put("status", "error");
-		// Uživatelské jméno smí obsahovat pouze písmena, čísla nebo podtržítka
-		if (user.matches("^user=[a-zA-Z0-9_]+$") == false) {
-			this.setStatus(new Status(400));
-			msg.put("message", "Data should be 'user=[username]'");
+		if (user == null) {
+			msg.put("message", "No username");
+		} else if (user.matches("^[a-zA-Z0-9_]+$") == false) {
+			// Uživatelské jméno smí obsahovat pouze písmena, čísla nebo
+			// podtržítka
+			msg.put("message", "Data should be '[a-zA-Z0-9_]+'");
 		} else {
-			// Získám uživatelské jméno
-			user = user.replace("user=", "");
 			// Vygeneruju pseudonáhodné heslo
 			String secret = generateSecret();
 			// Pokud existuje uživatelské jméno
@@ -59,7 +66,8 @@ public class Users extends ServerResource {
 				this.setStatus(new Status(409));
 				msg.put("message", "Username already exists");
 			} else {
-				this.setStatus(new Status(201));
+				this.setStatus(new Status(200));
+				this.setLocationRef("./users/" + user);
 				msg.put("status", "ok");
 				msg.put("username", user);
 				msg.put("secret", secret);
