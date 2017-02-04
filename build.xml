@@ -121,7 +121,9 @@
 		<javadoc sourcepath="${classes.dir}" destdir="${doc.dir}" encoding="UTF-8" charset="UTF-8" docencoding="UTF-8" classpath="${lib.dir}/*" />
 	</target>
 
-	<target name="jar" depends="compile" description="create .jar file">
+	<target name="jar" depends="jar-client,jar-server" description="create both .jar files"></target>
+	
+	<target name="jar-client" depends="compile" description="create .jar file">
 		<mkdir dir="${build.jar.dir}" />
 		<jar destfile="${build.jar.dir}/${ant.project.name}.jar" basedir="${build.classes.dir}" encoding="UTF-8">
 			<manifest>
@@ -131,11 +133,27 @@
 			<!-- Include libraries -->
 			<zipgroupfileset includes="*.jar" dir="./lib" />
 		</jar>
-
 	</target>
+	
+	<target name="jar-server" depends="compile" description="create server .jar file">
+			<mkdir dir="${build.jar.dir}" />
+			<jar destfile="${build.jar.dir}/${ant.project.name}_Server.jar" basedir="${build.classes.dir}" encoding="UTF-8">
+				<manifest>
+					<attribute name="Main-Class" value="cz.alej.michalik.totp.server.Serve" />
+					<attribute name="Class-Path" value="." />
+				</manifest>
+				<!-- Include libraries -->
+				<zipgroupfileset includes="*.jar" dir="./lib" />
+			</jar>
 
-	<target name="run" depends="jar" description="run .jar file">
+		</target>
+
+	<target name="run" depends="jar" description="run client .jar file">
 		<java jar="${build.jar.dir}/${ant.project.name}.jar" fork="true" />
+	</target>
+	
+	<target name="run-server" depends="jar" description="run .jar file">
+		<java jar="${build.jar.dir}/${ant.project.name.server}_Server.jar" fork="true" />
 	</target>
 
 	<target name="main" depends="clean,run" description="clean and test" />
