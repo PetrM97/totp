@@ -38,15 +38,30 @@ import cz.alej.michalik.totp.util.OTPFactory;
  */
 public class User extends ServerResource {
 
+	// Uživatelské jméno
 	String user;
+	// JSON zpráva vrácena každou metodou
+	JSONObject msg;
+	// HTTP kódy
+	Status error = new Status(404);
+	Status success = new Status(200);
+	Status created = new Status(201);
 
 	/**
 	 * Získá uživatelské jméno obsažené v URI
 	 */
 	public void doInit() {
+		// Pokud metoda nezmění stav, stala se chyba
+		msg = new JSONObject();
+		msg.put("status", "error");
+
 		this.user = getAttribute("id");
 		if (!Data.exists(user)) {
 			user = null;
+			msg.put("exists", "0");
+			msg.put("message", "User does not exist");
+		} else {
+			msg.put("exists", "1");
 		}
 	}
 
@@ -59,10 +74,7 @@ public class User extends ServerResource {
 	 */
 	@Post
 	public String validate(String pass) {
-		// Odpoved
-		JSONObject msg = new JSONObject();
-		this.setStatus(new Status(404));
-		msg.put("status", "error");
+		this.setStatus(error);
 		msg.put("valid", "false");
 		if (user != null && pass != null) {
 			// Sdilene heslo
@@ -71,7 +83,7 @@ public class User extends ServerResource {
 			List<String> codes = getAllCodes(secret, 1);
 			msg.put("status", "ok");
 			if (codes.contains(pass)) {
-				this.setStatus(new Status(200));
+				this.setStatus(success);
 				msg.put("valid", "true");
 			} else {
 				this.setStatus(new Status(401));
@@ -94,7 +106,8 @@ public class User extends ServerResource {
 	private List<String> getAllCodes(byte[] secret, int window) {
 		List<String> codes = new LinkedList<String>();
 		for (int i = -window; i <= window; i++) {
-			String code = new OTPFactory().getOTP("TOTP", secret).setCounter(i * 30).toString();
+			long step = Serve.step;
+			String code = new OTPFactory().getOTP("TOTP", secret).setCounter(i * step).toString();
 			codes.add(code);
 		}
 		return codes;
@@ -107,13 +120,11 @@ public class User extends ServerResource {
 	 */
 	@Get
 	public String getUser() {
-		JSONObject msg = new JSONObject();
-		this.setStatus(new Status(404));
-		msg.put("status", "error");
+		this.setStatus(error);
 		if (user != null) {
 			msg.put("status", "ok");
 			msg.put("secret", Data.get(user));
-			this.setStatus(new Status(200));
+			this.setStatus(success);
 		}
 		return msg.toJSONString();
 	}
@@ -125,15 +136,13 @@ public class User extends ServerResource {
 	 */
 	@Put
 	public String update() {
-		JSONObject msg = new JSONObject();
-		this.setStatus(new Status(404));
-		msg.put("status", "error");
+		this.setStatus(error);
 		if (user != null) {
 			String secret = Users.generateSecret();
 			Data.add(user, secret, true);
 			msg.put("status", "ok");
 			msg.put("secret", secret);
-			this.setStatus(new Status(201));
+			this.setStatus(created);
 			this.setLocationRef("./" + user);
 		}
 		return msg.toJSONString();
@@ -144,13 +153,11 @@ public class User extends ServerResource {
 	 */
 	@Delete
 	public StringRepresentation delete() {
-		JSONObject msg = new JSONObject();
-		this.setStatus(new Status(404));
-		msg.put("status", "error");
+		this.setStatus(error);
 		if (user != null) {
 			Data.remove(user);
 			msg.put("status", "ok");
-			this.setStatus(new Status(200));
+			this.setStatus(success);
 		}
 		return new StringRepresentation(msg.toJSONString());
 	}

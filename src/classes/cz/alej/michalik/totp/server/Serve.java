@@ -28,7 +28,10 @@ import org.restlet.routing.Router;
  */
 public class Serve {
 
+	// HTTP Port
 	private static int port = 8080;
+	// Časový interval generování TOTP hesla
+	public static int step = 30;
 
 	/**
 	 * Vytvoří nový server

@@ -38,7 +38,22 @@ import org.restlet.resource.ServerResource;
 public class Users extends ServerResource {
 
 	Properties p = Data.load();
-	String user = null;
+	JSONObject msg = new JSONObject();
+
+	// HTTP kódy
+	Status error = new Status(404);
+	Status conflict = new Status(409);
+	Status success = new Status(200);
+	Status created = new Status(201);
+
+	/**
+	 * Nastaví zprávu
+	 */
+	public void doInit() {
+		// Pokud metoda nezmění stav, stala se chyba
+		msg = new JSONObject();
+		msg.put("status", "error");
+	}
 
 	/**
 	 * Vytvoří nový záznam a vrátí index záznamu a klíč
@@ -47,11 +62,7 @@ public class Users extends ServerResource {
 	 */
 	@Post
 	public String create(String user) {
-		// Zpráva pro klienta je JSON
-		JSONObject msg = new JSONObject();
-		// Pokud se status nezmění, nastala chyba
-		this.setStatus(new Status(400));
-		msg.put("status", "error");
+		this.setStatus(error);
 		if (user == null) {
 			msg.put("message", "No username");
 		} else if (user.matches("^[a-zA-Z0-9_]+$") == false) {
@@ -63,10 +74,10 @@ public class Users extends ServerResource {
 			String secret = generateSecret();
 			// Pokud existuje uživatelské jméno
 			if (!Data.add(user, secret, false)) {
-				this.setStatus(new Status(409));
+				this.setStatus(conflict);
 				msg.put("message", "Username already exists");
 			} else {
-				this.setStatus(new Status(200));
+				this.setStatus(created);
 				this.setLocationRef("./users/" + user);
 				msg.put("status", "ok");
 				msg.put("username", user);
@@ -84,8 +95,7 @@ public class Users extends ServerResource {
 	@Get
 	public String getUsers() {
 		// Zpráva pro klienta je JSON
-		JSONObject msg = new JSONObject();
-		this.setStatus(new Status(200));
+		this.setStatus(success);
 		p = Data.load();
 		msg.put("status", "ok");
 		msg.put("users", String.valueOf(p.size()));
@@ -97,7 +107,6 @@ public class Users extends ServerResource {
 	 */
 	@Delete
 	public StringRepresentation delete() {
-		JSONObject msg = new JSONObject();
 		Data.deleteAll();
 		msg.put("status", "ok");
 		return new StringRepresentation(msg.toJSONString());
