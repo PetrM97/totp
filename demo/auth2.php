@@ -15,9 +15,8 @@ $message = "";
 function totp_auth() {
 	global $user;
 	global $message;
-	//$user = "demo";
 	if( !isset($_POST['code']) ){
-		$pass = -1;
+		$pass = null;
 	}else{
 		$pass = $_POST['code'];
         }
@@ -34,21 +33,29 @@ function totp_auth() {
         $json = json_decode($curl_response, true);
        	//echo "Valid " . $json['valid'];
         //echo "Status " . $json['status'];
-        if( $json['valid'] == "true" ||
-	 ($json['valid'] == "false" && $json['status'] == "error")){
+        if( $json['valid'] == "true" || $json['exists'] == "0"){
 		$message = "Přihlášen";
 		//header('Location: ' . "index.php");
                 return True;
         }
-	$message = "Nesprávné heslo";
+	if( !is_null($pass) ) { $message = "Nesprávné heslo";}
         return False;
 }
 
 totp_auth();
 ?>
-
-<form action="" method="post">
-	<p id="message"><?php echo $message ?></p>
-	<input type="number" name="code" required>
-	<input type="submit" value="Odeslat">
-</form>
+<?DOCTYPE html>
+<html>
+<head>
+	<title>Dvoufázové ověření</title>
+	<meta charset="utf-8" />
+	<link rel="stylesheet" href="auth2.css">
+</head>
+<body>
+	<form action="" method="post">
+		<p id="message"><?php echo $message ?></p>
+		<input type="number" name="code" required autofocus>
+		<input type="submit" value="Odeslat">
+	</form>
+<body>
+<html>

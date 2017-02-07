@@ -3,9 +3,9 @@
 $totp_addr = "auth2.php";
 
 function authenticate() {
-    header('WWW-Authenticate: Basic realm="Test Authentication System"');
+    header('WWW-Authenticate: Basic realm="TOTP Demo"');
     header('HTTP/1.0 401 Unauthorized');
-    echo "You must enter a valid login ID and password to access this resource\n";
+    echo "Pro přihlášení zadejte správné uživatelské jméno a heslo\n";
     exit;
 }
 

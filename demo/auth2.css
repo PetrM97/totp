@@ -1,0 +1,13 @@
+HTML, BODY{
+	height: 100%;
+	text-align: center;
+}
+
+FORM{
+	position: absolute;
+	height: 50%;
+	width: 50%;
+	left: 25%;
+	top: 25%;
+	border: 1px dashed black
+}
