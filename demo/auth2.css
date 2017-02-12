@@ -9,5 +9,26 @@ FORM{
 	width: 50%;
 	left: 25%;
 	top: 25%;
-	border: 1px dashed black
+	border: 1px solid black
+}
+
+#in {
+	font-family: Monospace;
+	padding: 1ex;
+	border: solid;
+	border-radius: 1ex 0 0 1ex;
+}
+
+#sub {
+	margin-left: -1ex;
+	text-transform: uppercase;
+	border-radius: 0 1ex 1ex 0;
+	cursor: pointer;
+        border: solid;
+        padding: 1.1ex;
+}
+
+#message {
+	color: red;
+	font-weight: bold;
 }

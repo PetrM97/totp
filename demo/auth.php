@@ -1,26 +1,41 @@
 <?php
+require 'totp.php';
 
-$totp_addr = "auth2.php";
+session_start();
 
-function authenticate() {
+if(isset($_GET['logout'])){
+        logout();
+        header('Location: auth.php');
+        die();
+}
+
+if(isset($_SESSION['user'])){
+        $_SESSION['user'] = $_SERVER['PHP_AUTH_USER'];
+        $_SESSION['pass'] = $_SERVER['PHP_AUTH_PW'];
+}
+
+function auth() {
     header('WWW-Authenticate: Basic realm="TOTP Demo"');
     header('HTTP/1.0 401 Unauthorized');
+    $_SESSION['user'] = $_SERVER['PHP_AUTH_USER'];
+    $_SESSION['pass'] = $_SERVER['PHP_AUTH_PW'];
     echo "Pro přihlášení zadejte správné uživatelské jméno a heslo\n";
-    exit;
+    echo $_SESSION['user'] . "\n";
+    echo $_SESSION['pass'] . "\n";
+    die();
 }
 
-if (!isset($_SERVER['PHP_AUTH_USER']) ||
-    ($_POST['SeenBefore'] == 1 && $_POST['OldAuth'] == $_SERVER['PHP_AUTH_USER'])) {
-    authenticate();
+if ( !pass_verify() ) {
+    auth();
 } else {
-    echo "<p>Welcome: " . htmlspecialchars($_SERVER['PHP_AUTH_USER']) . "<br />";
-    echo "Old: " . htmlspecialchars($_REQUEST['OldAuth']);
-    echo "<form action='' method='post'>\n";
-    echo "<input type='hidden' name='SeenBefore' value='1' />\n";
-    echo "<input type='hidden' name='OldAuth' value=\"" . htmlspecialchars($_SERVER['PHP_AUTH_USER']) . "\" />\n";
-    echo "<input type='submit' value='Re Authenticate' />\n";
-    echo "</form></p>\n";
-	echo "<a href='" . $totp_addr . "'>Pokracovat</a>";
+        //authenticate();
+        echo "Logged in: " . htmlspecialchars($_SESSION["logged_in"]);
+        echo "<p>Verify: " . pass_verify() . "</p>";
+        echo "<p>Welcome: " . htmlspecialchars($_SESSION['user']) . "<br />";
+        echo "<form action='' method='post'>\n";
+        echo "<input type='submit' value='Re Authenticate' />\n";
+        echo "</form></p>\n";
+        echo "<a href='?logout'>Logout</a>\n";
+        echo "<a href='auth2.php'>Pokracovat</a>";
 }
 ?>
-

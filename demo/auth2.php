@@ -1,48 +1,23 @@
 <?php
-
-$auth_addr = "auth.php";
+require 'totp.php';
+session_start();
 
 // Lze ověřit pouze přihlášeného uživatele
-
-if ( !isset($_SERVER['PHP_AUTH_USER']) ){
-	header('Location: ' . $auth_addr);
+if ( !isset($_SESSION['user']) ){
+	header('Location: auth.php');
 	die();
 }
 
-$user = $_SERVER['PHP_AUTH_USER'];
 $message = "";
 
-function totp_auth() {
-	global $user;
-	global $message;
-	if( !isset($_POST['code']) ){
-		$pass = null;
+if( isset($_POST['code']) ){
+	if( !totp_auth($_POST['code']) ){
+		$message = "Nesprávné heslo";
 	}else{
-		$pass = $_POST['code'];
-        }
-	$service_url = 'localhost:8080/users/' . $user;
-
-        $curl = curl_init($service_url);
-        $curl_post_data = $pass;
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($curl, CURLOPT_POST, true);
-        curl_setopt($curl, CURLOPT_POSTFIELDS, $curl_post_data);
-        $curl_response = curl_exec($curl);
-        curl_close($curl);
-
-        $json = json_decode($curl_response, true);
-       	//echo "Valid " . $json['valid'];
-        //echo "Status " . $json['status'];
-        if( $json['valid'] == "true" || $json['exists'] == "0"){
 		$message = "Přihlášen";
-		//header('Location: ' . "index.php");
-                return True;
-        }
-	if( !is_null($pass) ) { $message = "Nesprávné heslo";}
-        return False;
+	}
 }
 
-totp_auth();
 ?>
 <?DOCTYPE html>
 <html>
@@ -53,9 +28,15 @@ totp_auth();
 </head>
 <body>
 	<form action="" method="post">
+		<p id="head">
+			<h2>Dvoufázové ověření</h2>
+			Zadejte Váš jednorázový ověřovací kód.
+		</p>
+		<br>
+		<input id="in" type="number" name="code"
+onpaste="setTimeout(function(){submit()},0);" required autofocus>
+		<input id="sub" type="submit" class="btn" value="Odeslat">
 		<p id="message"><?php echo $message ?></p>
-		<input type="number" name="code" required autofocus>
-		<input type="submit" value="Odeslat">
 	</form>
 <body>
 <html>
