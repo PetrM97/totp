@@ -10,21 +10,22 @@ if ( !isset($_SESSION['user']) ){
 
 $message = "";
 
-if( isset($_POST['code']) ){
-	if( !totp_auth($_POST['code']) ){
-		$message = "Nesprávné heslo";
-	}else{
-		$message = "Přihlášen";
-	}
+if( isset($_POST['code']) ){$message = "Nesprávné heslo";}
+if( !totp_exists() ){$_SESSION['totp'] = True;}
+if(isset($_SESSION['totp']) ||
+( isset($_POST['code']) && totp_auth($_POST['code']) )
+){
+	header('Location: index.php');
+	die();
 }
 
 ?>
-<?DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
 	<title>Dvoufázové ověření</title>
 	<meta charset="utf-8" />
-	<link rel="stylesheet" href="auth2.css">
+	<link rel="stylesheet" href="style.css">
 </head>
 <body>
 	<form action="" method="post">
@@ -38,5 +39,5 @@ onpaste="setTimeout(function(){submit()},0);" required autofocus>
 		<input id="sub" type="submit" class="btn" value="Odeslat">
 		<p id="message"><?php echo $message ?></p>
 	</form>
-<body>
-<html>
+</body>
+</html>

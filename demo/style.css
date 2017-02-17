@@ -9,23 +9,37 @@ FORM{
 	width: 50%;
 	left: 25%;
 	top: 25%;
-	border: 1px solid black
+	/*border: 1px solid black;
+	overflow: hidden;*/
+}
+
+INPUT{
+	font-family: Monospace;
+	width: 80%;
+	padding: 1ex;
+	margin: 0.5ex;
+	border: solid;
+	border-radius: 1ex;
 }
 
 #in {
 	font-family: Monospace;
 	padding: 1ex;
+	margin: auto;
+	width: auto;
 	border: solid;
 	border-radius: 1ex 0 0 1ex;
 }
 
 #sub {
+	margin: auto;
+	width: auto;
 	margin-left: -1ex;
 	text-transform: uppercase;
 	border-radius: 0 1ex 1ex 0;
 	cursor: pointer;
         border: solid;
-        padding: 1.1ex;
+        padding: 0.9ex;
 }
 
 #message {

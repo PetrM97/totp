@@ -39,12 +39,28 @@ function save_data(){
 	}
 }
 
-function addUser($username){
-	return false;
+function addUser($username, $password){
+	global $users;
+
+	if( array_key_exists($username, $users) ){
+		return false;
+	}else{
+		$users[$username] = hashPass($password);
+		save_data();
+		return true;
+	}
 }
 
 function removeUser($username){
-	return false;
+	global $users;
+
+	if( !array_key_exists($username, $users) ){
+		return false;
+	}else{
+		unset($users[$username]);
+		save_data();
+		return true;
+	}
 }
 
 function hashPass($string){
@@ -61,8 +77,10 @@ function authenticate(){
 	}
 	if( !isset($_SESSION['logged_in']) ){
 		header('Location: ' . $auth1_addr);
+		die();
 	}elseif( !isset($_SESSION['totp']) ){
 		header('Location: ' . $auth2_addr);
+		die();
 	}
 }
 
@@ -86,7 +104,7 @@ function totp_add($user){
 	$url = $totp_addr . '/users';
 
 	$curl = curl_init($url);
-        $curl_post_data = $username;
+        $curl_post_data = $user;
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($curl, CURLOPT_POST, true);
         curl_setopt($curl, CURLOPT_POSTFIELDS, $curl_post_data);
@@ -95,17 +113,16 @@ function totp_add($user){
 
         $json = json_decode($curl_response, true);
         if( $json['status'] == "ok"){
-                return True;
+                return $json['secret'];
         }else {
-                return False;
+                return null;
         }
 }
 
 function totp_exists(){
 	global $totp_addr;
 
-	$url = $totp_addr . "/users/";
-	$url .= $_SESSION['user'];
+	$url = $totp_addr . "/users/" . $_SESSION['user'];
 
         $curl = curl_init($url);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
@@ -173,8 +190,7 @@ function totp_delete(){
 
         $curl = curl_init($url);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($curl, CURLOPT_POST, true);
-        curl_setopt($curl, CURLOPT_POSTFIELDS, $curl_post_data);
+        curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "DELETE");
         $curl_response = curl_exec($curl);
         curl_close($curl);
 
@@ -188,5 +204,5 @@ function totp_delete(){
 
 function logout(){
 	session_destroy();
-	session_regenerate_id();
+	session_regenerate_id(true);
 }

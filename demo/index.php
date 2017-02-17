@@ -1,15 +1,30 @@
 <?php
+require 'totp.php';
+authenticate();
 
-$user = 'demo';
-$service_url = 'localhost:8080/users/' . $user;
-$curl = curl_init($service_url);
-$curl_post_data = $_GET["code"];
-curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-curl_setopt($curl, CURLOPT_POST, true);
-curl_setopt($curl, CURLOPT_POSTFIELDS, $curl_post_data);
-$curl_response = curl_exec($curl);
-curl_close($curl);
+$message = "";
 
-echo $curl_response
+if( isset($_GET['logout']) ){
+        logout();
+        authenticate();
+}
+
+if( isset($_GET['totp']) ){
+        $message = "Váš nový TOTP kód je: ";
+        $message .= totp_reset();
+}
 
 ?>
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Přihlášen</title>
+	<meta charset="utf-8" />
+</head>
+<body>
+        <h2><?php echo 'Vítej ' . $_SESSION['user'] ?></h2>
+        <a href="?totp">Vygenerovat nový TOTP kód</a><br>
+        <a href="?logout">Odhlásit se</a><br>
+	<p id="message"><?php echo $message ?></p>
+</body>
+</html>

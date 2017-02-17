@@ -64,4 +64,12 @@ public class Serve {
 		return router;
 	}
 
+	/**
+	 * Vrátí port serveru
+	 * 
+	 * @return port
+	 */
+	public static int getPort() {
+		return port;
+	}
 }
