@@ -26,7 +26,8 @@ import java.util.Properties;
 
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
-import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JViewport;
 
 /**
  * Grafické prostředí pro generování TOTP kódů
@@ -40,8 +41,12 @@ public class App {
 	public final static float FONT_SIZE = 48f;
 	public static final Color COLOR = new Color(255, 255, 255);
 	private static Properties p = new Properties();
+	// Okno
 	private static JFrame window = new JFrame("TOTP");
-	private static JPanel mainPanel = new MainPanel(p);
+	// Hlavní panel - záznamy + tlačítko
+	private static MainPanel mainPanel = new MainPanel(p);
+	// Obsahuje rámec pro posun na hlavním panelu
+	private static JScrollPane scrollFrame = new JScrollPane(mainPanel);
 
 	/**
 	 * Spustí grafické prostředí
@@ -51,7 +56,7 @@ public class App {
 	public static void main(String[] args) {
 		// Parametry okna
 		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		window.setMinimumSize(new Dimension(600, 150));
+		window.setMinimumSize(new Dimension(320, 240));
 		window.setLayout(new BoxLayout(window.getContentPane(), BoxLayout.Y_AXIS));
 		window.setLocationByPlatform(true);
 
@@ -83,10 +88,19 @@ public class App {
 			e.printStackTrace();
 		}
 
-		window.remove(mainPanel);
+		window.remove(scrollFrame);
+
 		mainPanel = new MainPanel(p);
-		window.add(mainPanel);
-		window.pack();
+
+		scrollFrame = new JScrollPane(mainPanel);
+		scrollFrame.setPreferredSize(new Dimension(640, 480));
+		scrollFrame.getVerticalScrollBar().setUnitIncrement(16);
+		scrollFrame.getViewport().setScrollMode(JViewport.BACKINGSTORE_SCROLL_MODE);
+
+		window.add(scrollFrame);
+
+		window.repaint();
+		window.setVisible(true);
 	}
 
 	/**
