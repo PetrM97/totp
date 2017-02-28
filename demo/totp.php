@@ -8,6 +8,7 @@ $data_file = ".passwd";
 $hash_method = "{plain}";
 $users = load_data();
 save_data();
+session_start();
 
 function load_data() {
 	global $data_file;
@@ -42,6 +43,7 @@ function save_data(){
 function addUser($username, $password){
 	global $users;
 
+	$username = strtolower($username);
 	if( array_key_exists($username, $users) ){
 		return false;
 	}else{
@@ -51,8 +53,9 @@ function addUser($username, $password){
 	}
 }
 
-function removeUser($username){
+function removeUser(){
 	global $users;
+	$username = $_SESSION['user'];
 
 	if( !array_key_exists($username, $users) ){
 		return false;
@@ -72,9 +75,6 @@ function authenticate(){
 	global $auth1_addr;
 	global $auth2_addr;
 
-	if(session_status() == PHP_SESSION_NONE){
-		session_start();
-	}
 	if( !isset($_SESSION['logged_in']) ){
 		header('Location: ' . $auth1_addr);
 		die();
@@ -87,9 +87,11 @@ function authenticate(){
 function pass_verify(){
 	global $users;
 
+	$user = strtolower($_SESSION['user']);
 	$pass = hashPass($_SESSION['pass']);
 	// Check username and password
-	if( array_key_exists($_SESSION['user'], $users) && $pass == $users[$_SESSION['user']]){
+	if( array_key_exists($user, $users) &&
+	( strcmp($pass,$users[$user]) == 0 ) ){
 		$_SESSION['logged_in'] = True;
 		return True;
 	}else{
@@ -121,8 +123,9 @@ function totp_add($user){
 
 function totp_exists(){
 	global $totp_addr;
+	$user = $_SESSION['user'];
 
-	$url = $totp_addr . "/users/" . $_SESSION['user'];
+	$url = $totp_addr . "/users/" . $user;
 
         $curl = curl_init($url);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
@@ -139,13 +142,14 @@ function totp_exists(){
 
 function totp_auth($code){
 	global $totp_addr;
+	$user = $_SESSION['user'];
 
 	if( !totp_exists() ){
 		$_SESSION['totp'] = True;
 		return True;
 	}
 
-	$url = $totp_addr . '/users/' . $_SESSION['user'];
+	$url = $totp_addr . '/users/' . $user;
 
         $curl = curl_init($url);
         $curl_post_data = $code;
@@ -169,8 +173,9 @@ function totp_auth($code){
 
 function totp_reset(){
 	global $totp_addr;
+	$user = $_SESSION['user'];
 
-	$url = $totp_addr . '/users/' . $_SESSION['user'];
+	$url = $totp_addr . '/users/' . $user;
 
         $curl = curl_init($url);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
@@ -185,8 +190,9 @@ function totp_reset(){
 
 function totp_delete(){
 	global $totp_addr;
+	$user = $_SESSION['user'];
 
-	$url = $totp_addr . '/users/' . $_SESSION['user'];
+	$url = $totp_addr . '/users/' . $user;
 
         $curl = curl_init($url);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
@@ -195,7 +201,7 @@ function totp_delete(){
         curl_close($curl);
 
         $json = json_decode($curl_response, true);
-        if( $json['valid'] == "true"){
+        if( $json['exists'] == "true"){
                 return True;
         }else {
                 return False;
@@ -203,6 +209,7 @@ function totp_delete(){
 }
 
 function logout(){
+	unset($_SESSION['logged_in']);
+	unset($_SESSION['totp']);
 	session_destroy();
-	session_regenerate_id(true);
 }

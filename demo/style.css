@@ -22,6 +22,11 @@ INPUT{
 	border-radius: 1ex;
 }
 
+A {
+	margin: 1em;
+	display: block;
+}
+
 #in {
 	font-family: Monospace;
 	padding: 1ex;
@@ -40,6 +45,10 @@ INPUT{
 	cursor: pointer;
         border: solid;
         padding: 0.9ex;
+}
+
+#check {
+	width:auto;
 }
 
 #message {

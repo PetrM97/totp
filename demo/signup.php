@@ -1,19 +1,22 @@
 <?php
 require 'totp.php';
-session_start();
 
 $message = "";
 
 if( isset($_POST['user']) && isset($_POST['pass']) ){
-        if( addUser($_POST['user'],$_POST['pass']) ){
-                $secret = totp_add($_POST['user']);
-                if( $secret != null ){
-                        $message = "Sdílené heslo je " . $secret;
-                }else{
-                        $message = "Chyba při vytváření TOTP hesla";
+        if( addUser($_POST['user'],$_POST['pass'])){
+                $message .= "Uživatel " . $_POST['user'] . " byl vytvořen.<br>";
+
+                if( isset($_POST['totp_check']) ){
+                        $secret = totp_add($_POST['user']);
+                        if( $secret != null ){
+                                $message .= "TOTP heslo je " . $secret;
+                        }else{
+                                $message .= "Chyba při vytváření TOTP hesla";
+                        }
                 }
         }else{
-                $message = "Uživatel již existuje";
+                $message .= "Uživatel již existuje";
         }
 }
 
@@ -27,10 +30,14 @@ if( isset($_POST['user']) && isset($_POST['pass']) ){
 	<link rel="stylesheet" href="style.css">
 </head>
 <body>
+        <a href="/">Zpět</a>
 	<form action="" method="post">
                 <h2>Registrace</h2>
 		<input id="user" type="text" name="user" required autofocus>
                 <input id="pass" type="password" name="pass" required>
+                <label>Vygenerovat TOTP
+                        <input id="check" type="checkbox" name="totp_check">
+                </label>
 		<input id="register" type="submit" value="Odeslat">
 		<p id="message"><?php echo $message ?></p>
 	</form>

@@ -1,6 +1,5 @@
 <?php
 require 'totp.php';
-session_start();
 
 // Lze ověřit pouze přihlášeného uživatele
 if ( !isset($_SESSION['user']) ){
