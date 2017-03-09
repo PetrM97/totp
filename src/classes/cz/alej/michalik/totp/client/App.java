@@ -26,6 +26,7 @@ import java.util.Properties;
 
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JViewport;
 
@@ -40,13 +41,14 @@ public class App {
 	private final static String PATH = "client.properties";
 	public final static float FONT_SIZE = 48f;
 	public static final Color COLOR = new Color(255, 255, 255);
+	// Záznamy
 	private static Properties p = new Properties();
 	// Okno
 	private static JFrame window = new JFrame("TOTP");
-	// Hlavní panel - záznamy + tlačítko
-	private static MainPanel mainPanel = new MainPanel(p);
-	// Obsahuje rámec pro posun na hlavním panelu
-	private static JScrollPane scrollFrame = new JScrollPane(mainPanel);
+	// Panel pro posun v hlavním panelu se záznamy
+	private static JScrollPane scrollFrame = new JScrollPane();
+	// Tlačítko pro přidání nových záznamů
+	private static JPanel ap = new AddPanel(p);
 
 	/**
 	 * Spustí grafické prostředí
@@ -54,13 +56,17 @@ public class App {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		// Parametry okna
+		/* Parametry okna */
+		// Ukončení programu při zavření
 		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		window.setMinimumSize(new Dimension(320, 240));
+		// Rozvržení obsahu podle osy Y
 		window.setLayout(new BoxLayout(window.getContentPane(), BoxLayout.Y_AXIS));
+		// Umístění okna určí OS
 		window.setLocationByPlatform(true);
 
 		p.setProperty("-1", "Test;GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ");
+
 		// Načte uložené hodnoty
 		loadProperties();
 		saveProperties();
@@ -71,13 +77,15 @@ public class App {
 	}
 
 	/**
-	 * Načte nastavení a vykreslí ho do aplikace
+	 * Načte nastavení a vykreslí změny do aplikace
 	 */
 	public static void loadProperties() {
+		System.out.println("Překresluji");
 		// Vytvoří soubor při prvním spuštění
 		if (new File(PATH).exists() == false) {
 			saveProperties();
 		}
+		// Načte nastavení ze souboru
 		try {
 			p.load(new FileReader(PATH));
 		} catch (FileNotFoundException e) {
@@ -88,16 +96,22 @@ public class App {
 			e.printStackTrace();
 		}
 
+		// Odstraním současný obsah
 		window.remove(scrollFrame);
+		window.remove(ap);
+		// Aktualizuji obsah
+		ap = new AddPanel(p);
+		scrollFrame = new JScrollPane(new MainPanel(p));
 
-		mainPanel = new MainPanel(p);
-
-		scrollFrame = new JScrollPane(mainPanel);
+		// Nastavení hlavního panelu se záznamy
 		scrollFrame.setPreferredSize(new Dimension(640, 480));
+		// Nastavení pro plynulé scrollování
 		scrollFrame.getVerticalScrollBar().setUnitIncrement(16);
 		scrollFrame.getViewport().setScrollMode(JViewport.BACKINGSTORE_SCROLL_MODE);
 
+		// Do okna přidám panely s novým obsahem
 		window.add(scrollFrame);
+		window.add(ap);
 
 		window.repaint();
 		window.setVisible(true);

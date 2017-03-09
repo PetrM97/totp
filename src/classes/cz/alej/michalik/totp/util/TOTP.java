@@ -22,7 +22,7 @@ import org.apache.commons.codec.binary.Base32;
 
 /**
  * Třída pro generování TOTP hesla pomocí HOTP algoritmu podle RFC6238
- * specifikace
+ * specifikace. Implemetuje Fluent interface.
  * 
  * @author Petr Michalík
  * @see HOTP
@@ -55,49 +55,11 @@ public class TOTP implements OTP {
 	}
 
 	/**
-	 * Nastaví sdílené heslo
-	 * 
-	 * @param secret
-	 *            heslo jako byte[]
-	 * @return TOTP třída
-	 */
-	public TOTP setSecret(byte[] secret) {
-		hotp.setSecret(secret);
-		return this;
-	}
-
-	/**
-	 * Nastaví počet číslic hesla v rozmezí od 6 do 8 číslic
-	 * 
-	 * @param digits
-	 *            počet číslic
-	 * @return TOTP třída
-	 * @throws Error
-	 *             špatný počet číslic
-	 */
-	public TOTP setDigits(int digits) {
-		hotp.setDigits(digits);
-		return this;
-	}
-
-	/**
-	 * Nastaví jak často se budou hesla generovat
-	 * 
-	 * @param step
-	 *            počet vteřin
-	 * @return TOTP třída
-	 */
-	public TOTP setStep(int step) {
-		this.step = step;
-		return this;
-	}
-
-	/**
 	 * Nastaví algoritmus výpočtu HMAC hashe
 	 * 
 	 * @param alg
 	 *            algoritmus
-	 * @return TOTP třída
+	 * @return sebe
 	 */
 	public TOTP setAlgorithm(String alg) {
 		hotp.setAlgorithm(alg);
@@ -109,7 +71,7 @@ public class TOTP implements OTP {
 	 * 
 	 * @param time
 	 *            čas v sekundách
-	 * @return TOTP třída
+	 * @return sebe
 	 */
 	public TOTP setCounter(long time) {
 		t0 = time;
@@ -117,21 +79,53 @@ public class TOTP implements OTP {
 	}
 
 	/**
-	 * Vrátí nastavený počet číslic
+	 * Nastaví počet číslic hesla v rozmezí od 6 do 8 číslic
 	 * 
-	 * @return počet číslic
+	 * @param digits
+	 *            počet číslic
+	 * @return sebe
+	 * @throws Error
+	 *             špatný počet číslic
 	 */
-	public int getDigits() {
-		return hotp.getDigits();
+	public TOTP setDigits(int digits) {
+		hotp.setDigits(digits);
+		return this;
 	}
 
 	/**
-	 * Vrátí nastavenou periodu generování hesla
+	 * Nastaví sdílené heslo
 	 * 
-	 * @return čas v sekundách
+	 * @param secret
+	 *            heslo jako byte[]
+	 * @return sebe
 	 */
-	public int getStep() {
-		return step;
+	public TOTP setSecret(byte[] secret) {
+		hotp.setSecret(secret);
+		return this;
+	}
+
+	/**
+	 * Nastaví časový posun
+	 * 
+	 * @param shift
+	 *            čas v sekundách
+	 * @return sebe
+	 */
+	public TOTP setShift(int shift) {
+		this.t0 = shift;
+		return this;
+	}
+
+	/**
+	 * Nastaví jak často se budou hesla generovat
+	 * 
+	 * @param step
+	 *            počet vteřin
+	 * @return sebe
+	 */
+	public TOTP setStep(int step) {
+		this.step = step;
+		return this;
 	}
 
 	/**
@@ -144,12 +138,39 @@ public class TOTP implements OTP {
 	}
 
 	/**
+	 * Vrátí nastavený počítadlo (čas)
+	 * 
+	 * @return počítadlo
+	 */
+	public long getCounter() {
+		return hotp.getCounter();
+	}
+
+	/**
+	 * Vrátí nastavený počet číslic
+	 * 
+	 * @return počet číslic
+	 */
+	public int getDigits() {
+		return hotp.getDigits();
+	}
+
+	/**
 	 * Vrátí nastavený časový posun
 	 * 
 	 * @return čas v sekundách
 	 */
 	public long getShift() {
 		return t0;
+	}
+
+	/**
+	 * Vrátí nastavenou periodu generování hesla
+	 * 
+	 * @return čas v sekundách
+	 */
+	public int getStep() {
+		return step;
 	}
 
 	/**

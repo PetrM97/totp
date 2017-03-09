@@ -58,19 +58,6 @@ public class MainPanel extends JPanel {
 			c.gridy += 1;
 		}
 
-		// Výplň pro nahuštění panelů
-		c.fill = GridBagConstraints.VERTICAL;
-		c.weighty = 10;
-
-		this.add(new JPanel(), c);
-
-		c.fill = GridBagConstraints.HORIZONTAL;
-		c.anchor = GridBagConstraints.SOUTH;
-		c.weighty = 0.5;
-		c.gridy = 99;
-		// Přidá panel pro přidání nových záznamů
-		this.add(new AddPanel(p), c);
-
 	}
 
 }

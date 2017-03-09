@@ -16,7 +16,8 @@
 package cz.alej.michalik.totp.util;
 
 /**
- * Třída pro generování HOTP hesla z HMAC hashe podle RFC4226
+ * Třída pro generování HOTP hesla z HMAC hashe podle RFC4226. Implementuje
+ * Fluent interface.
  * 
  * @author Petr Michalík
  * @see HMAC
@@ -25,7 +26,7 @@ package cz.alej.michalik.totp.util;
  */
 public class HOTP implements OTP {
 	// Běžně se počítá heslo od nuly
-	private int count = 0;
+	private long count = 0;
 	// HMAC objekt
 	private HMAC hmac = new HMAC();
 	// Běžná délka hesla je 6 číslic
@@ -66,14 +67,14 @@ public class HOTP implements OTP {
 	}
 
 	/**
-	 * Nastaví sdílené heslo
+	 * Nastaví algoritmus výpočtu HMAC hashe
 	 * 
-	 * @param secret
-	 *            heslo jako byte[]
-	 * @return HOTP třída
+	 * @param alg
+	 *            algoritmus
+	 * @return sebe
 	 */
-	public HOTP setSecret(byte[] secret) {
-		hmac.setKey(secret);
+	public HOTP setAlgorithm(String alg) {
+		hmac.setAlgorithm(alg);
 		return this;
 	}
 
@@ -82,10 +83,10 @@ public class HOTP implements OTP {
 	 * 
 	 * @param count
 	 *            hodnota počítadla
-	 * @return HOTP třída
+	 * @return sebe
 	 */
 	public HOTP setCounter(long c) {
-		count = (int) c;
+		count = c;
 		// Počítadlo je 8-bytové pole
 		byte[] counter = new byte[8];
 		// Je třeba z čísla udělat 8-bytové pole
@@ -103,7 +104,7 @@ public class HOTP implements OTP {
 	 * 
 	 * @param digits
 	 *            počet číslic
-	 * @return HOTP třída
+	 * @return sebe
 	 * @throws Error
 	 *             špatný počet číslic
 	 */
@@ -117,15 +118,24 @@ public class HOTP implements OTP {
 	}
 
 	/**
-	 * Nastaví algoritmus výpočtu HMAC hashe
+	 * Nastaví sdílené heslo
 	 * 
-	 * @param alg
-	 *            algoritmus
-	 * @return HOTP třída
+	 * @param secret
+	 *            heslo jako byte[]
+	 * @return sebe
 	 */
-	public HOTP setAlgorithm(String alg) {
-		hmac.setAlgorithm(alg);
+	public HOTP setSecret(byte[] secret) {
+		hmac.setKey(secret);
 		return this;
+	}
+
+	/**
+	 * Vrátí nastavený algoritmus
+	 * 
+	 * @return algoritmus
+	 */
+	public String getAlgorithm() {
+		return hmac.getAlgorithm();
 	}
 
 	/**
@@ -133,7 +143,7 @@ public class HOTP implements OTP {
 	 * 
 	 * @return počítadlo
 	 */
-	public int getCounter() {
+	public long getCounter() {
 		return count;
 	}
 
@@ -144,15 +154,6 @@ public class HOTP implements OTP {
 	 */
 	public int getDigits() {
 		return digits;
-	}
-
-	/**
-	 * Vrátí nastavený algoritmus
-	 * 
-	 * @return algoritmus
-	 */
-	public String getAlgorithm() {
-		return hmac.getAlgorithm();
 	}
 
 	/**

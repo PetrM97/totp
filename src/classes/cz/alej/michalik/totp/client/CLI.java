@@ -13,26 +13,31 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 */
-package cz.alej.michalik.totp.util;
+package cz.alej.michalik.totp.client;
 
-/**
- * Rozhraní pro definování generátoru jednorázových hesel
- * 
- * @author Petr Michalík
- * @see HOTP
- * @see TOTP
- * 
- */
-public interface OTP {
+import java.util.Scanner;
 
-	public String getAlgorithm();
+import cz.alej.michalik.totp.util.OTPFactory;
 
-	public int getDigits();
+public class CLI {
 
-	public int get();
+	private static String otp = "TOTP";
 
-	public String toString();
+	public static void main(String[] args) {
 
-	public Object setCounter(long i);
+		Scanner in = new Scanner(System.in);
+
+		while (in.hasNext()) {
+			String secret = in.nextLine();
+			if (secret.equals("")) {
+				continue;
+			}
+			String pass = new OTPFactory().getOTP(otp, secret.getBytes()).toString();
+			System.out.println(pass);
+		}
+
+		in.close();
+
+	}
 
 }
