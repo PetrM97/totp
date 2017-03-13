@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- ======================================================================                                                 
-     TOTP    
-                   
-     Petr Michalík                                                                
+<!-- ======================================================================
+     TOTP
+
+     Petr Michalík
      ====================================================================== -->
 <project name="TOTP" default="main" xmlns:ivy="antlib:org.apache.ivy.ant">
 	<description>
@@ -116,13 +116,20 @@
 	</target>
 
 	<target name="doc" description="generate javadocs">
+		<copy todir="img">
+			<fileset dir="${doc.dir}/img"/>
+		</copy>
 		<delete dir="${doc.dir}" />
 		<mkdir dir="${doc.dir}" />
+		<copy todir="${doc.dir}/img">
+			<fileset dir="img"/>
+		</copy>
+		<delete dir="img"/>
 		<javadoc sourcepath="${classes.dir}" destdir="${doc.dir}" encoding="UTF-8" charset="UTF-8" docencoding="UTF-8" classpath="${lib.dir}/*" />
 	</target>
 
 	<target name="jar" depends="jar-client,jar-server" description="create both .jar files"></target>
-	
+
 	<target name="jar-client" depends="compile" description="create .jar file">
 		<mkdir dir="${build.jar.dir}" />
 		<jar destfile="${build.jar.dir}/${ant.project.name}.jar" basedir="${build.classes.dir}" encoding="UTF-8">
@@ -134,7 +141,7 @@
 			<zipgroupfileset includes="*.jar" dir="./lib" />
 		</jar>
 	</target>
-	
+
 	<target name="jar-server" depends="compile" description="create server .jar file">
 			<mkdir dir="${build.jar.dir}" />
 			<jar destfile="${build.jar.dir}/${ant.project.name}_Server.jar" basedir="${build.classes.dir}" encoding="UTF-8">
@@ -151,7 +158,7 @@
 	<target name="run" depends="jar" description="run client .jar file">
 		<java jar="${build.jar.dir}/${ant.project.name}.jar" fork="true" />
 	</target>
-	
+
 	<target name="run-server" depends="jar" description="run .jar file">
 		<java jar="${build.jar.dir}/${ant.project.name.server}_Server.jar" fork="true" />
 	</target>
