@@ -5,6 +5,8 @@ Implementation of [RFC 6238](https://tools.ietf.org/html/rfc6238) in Java.
 
 Contains Client and Server app written in Java and Demo server in PHP.
 
+Project was made at [Gymnázium Nad Alejí](http://www.alej.cz/) as a Maturita exam work.
+
 ## How to use
 
 1. Download it here at GitHub at [Release page](https://github.com/PetrM97/totp/releases)
@@ -33,3 +35,7 @@ ant jar
 ```
 
 JAR files are then created in `/build/jar` folder
+
+## Wiki
+
+[Github Wiki](wiki) has more details, but is written in Czech language only.
