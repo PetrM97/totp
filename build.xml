@@ -139,6 +139,9 @@
 			</manifest>
 			<!-- Include libraries -->
 			<zipgroupfileset includes="*.jar" dir="./lib" />
+			<fileset dir="."> 
+				<include name="/material-design-icons/**/drawable-xxxhdpi/*black_*.png"/>
+			</fileset>
 		</jar>
 	</target>
 
@@ -155,11 +158,11 @@
 
 		</target>
 
-	<target name="run" depends="jar" description="run client .jar file">
+	<target name="run" depends="jar-client" description="run client .jar file">
 		<java jar="${build.jar.dir}/${ant.project.name}.jar" fork="true" />
 	</target>
 
-	<target name="run-server" depends="jar" description="run .jar file">
+	<target name="run-server" depends="jar-server" description="run .jar file">
 		<java jar="${build.jar.dir}/${ant.project.name.server}_Server.jar" fork="true" />
 	</target>
 

@@ -18,13 +18,16 @@ package cz.alej.michalik.totp.client;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.util.Properties;
 
+import javax.imageio.ImageIO;
 import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -59,6 +62,14 @@ public class AddPanel extends JPanel {
 		JButton plus = new JButton("+");
 		plus.setFont(plus.getFont().deriveFont(App.FONT_SIZE));
 		plus.setBackground(App.COLOR);
+		try {
+			String path = "/material-design-icons/content/drawable-xxxhdpi/ic_add_circle_black_18dp.png";
+			Image img = ImageIO.read(App.class.getResource(path));
+			plus.setIcon(new ImageIcon(img));
+			plus.setText("");
+		} catch (Exception e) {
+			System.out.println("Icon not found");
+		}
 		c.weightx = 1;
 		// Roztáhne prvek na celou šířku
 		c.fill = GridBagConstraints.HORIZONTAL;

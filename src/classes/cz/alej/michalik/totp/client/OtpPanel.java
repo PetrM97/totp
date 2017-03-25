@@ -18,10 +18,13 @@ package cz.alej.michalik.totp.client;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Properties;
 
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.Timer;
@@ -73,6 +76,14 @@ public class OtpPanel extends JPanel {
 
 		// Tlačítko pro smazání
 		JButton delete = new JButton("X");
+		try {
+			String path = "/material-design-icons/action/drawable-xxxhdpi/ic_delete_black_18dp.png";
+			Image img = ImageIO.read(App.class.getResource(path));
+			delete.setIcon(new ImageIcon(img));
+			delete.setText("");
+		} catch (Exception e) {
+			System.out.println("Icon not found");
+		}
 		delete.setFont(delete.getFont().deriveFont(App.FONT_SIZE));
 		delete.setBackground(App.COLOR);
 		// Zabere kousek vpravo

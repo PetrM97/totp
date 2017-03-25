@@ -17,6 +17,7 @@ package cz.alej.michalik.totp.client;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -64,6 +65,13 @@ public class App {
 		window.setLayout(new BoxLayout(window.getContentPane(), BoxLayout.Y_AXIS));
 		// Umístění okna určí OS
 		window.setLocationByPlatform(true);
+		// Nastavím ikonu
+		try {
+			String path = "/material-design-icons/action/drawable-xxxhdpi/ic_lock_black_48dp.png";
+			window.setIconImage(Toolkit.getDefaultToolkit().getImage(App.class.getResource(path)));
+		} catch (NullPointerException e) {
+			System.out.println("Icon not found");
+		}
 
 		p.setProperty("-1", "Test;GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ");
 
