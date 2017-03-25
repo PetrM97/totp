@@ -13,13 +13,11 @@ if( isset($_GET['delete']) ){
 }
 
 if( isset($_GET['activate']) ){
-        $message = "Váš TOTP kód je: ";
-        $message .= totp_add($_SESSION['user']);
+        $message .= write_secret($_SESSION['user'], totp_add($_SESSION['user']));
 }
 
 if( isset($_GET['totp']) ){
-        $message = "Váš nový TOTP kód je: ";
-        $message .= totp_reset();
+        $message .= write_secret($_SESSION['user'], totp_reset());
 }
 
 if( isset($_GET['deactivate']) ){
@@ -36,6 +34,7 @@ authenticate();
 	<title>Přihlášen</title>
 	<meta charset="utf-8" />
         <link rel="stylesheet" href="style.css">
+        <script src="https://cdn.jsdelivr.net/clipboard.js/1.6.0/clipboard.min.js"></script>
 </head>
 <body>
         <h2><?php echo 'Vítej ' . $_SESSION['user'] ?></h2>

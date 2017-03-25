@@ -4,7 +4,7 @@
 $auth1_addr = "auth.php";
 $auth2_addr = "auth2.php";
 $totp_addr = "localhost:8080";
-$data_file = ".passwd";
+$data_file = ".htpasswd";
 $hash_method = "{plain}";
 $users = load_data();
 save_data();
@@ -212,4 +212,16 @@ function logout(){
 	unset($_SESSION['logged_in']);
 	unset($_SESSION['totp']);
 	session_destroy();
+}
+
+function write_secret($username, $secret){
+	$message = "";
+	$message .= "TOTP heslo je <input id='secret' value=" . $secret . ">";
+	$message .= "<script>new Clipboard('.btn')</script>";
+	$message .= "<button class='btn' data-clipboard-target='#secret'>Zkopírovat</button>";
+	$message .= '<br>';
+	$data = "otpauth://totp/" . $username . "@TOTP-Demo?secret=" . $secret;
+	$url = "https://chart.googleapis.com/chart?cht=qr&chs=300x300&chl=" . $data;
+	$message .= "<img src='" . $url . "' />";
+	return $message;
 }

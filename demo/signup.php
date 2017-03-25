@@ -10,7 +10,7 @@ if( isset($_POST['user']) && isset($_POST['pass']) ){
                 if( isset($_POST['totp_check']) ){
                         $secret = totp_add($_POST['user']);
                         if( $secret != null ){
-                                $message .= "TOTP heslo je " . $secret;
+                                $message .= write_secret($_POST['user'],$secret);
                         }else{
                                 $message .= "Chyba při vytváření TOTP hesla";
                         }
@@ -28,6 +28,7 @@ if( isset($_POST['user']) && isset($_POST['pass']) ){
 	<title>Registrace</title>
 	<meta charset="utf-8" />
 	<link rel="stylesheet" href="style.css">
+        <script src="https://cdn.jsdelivr.net/clipboard.js/1.6.0/clipboard.min.js"></script>
 </head>
 <body>
         <a href="/">Zpět</a>
@@ -35,6 +36,7 @@ if( isset($_POST['user']) && isset($_POST['pass']) ){
                 <h2>Registrace</h2>
 		<input id="user" type="text" name="user" required autofocus>
                 <input id="pass" type="password" name="pass" required>
+                <br>
                 <label>Vygenerovat TOTP
                         <input id="check" type="checkbox" name="totp_check">
                 </label>
