@@ -16,15 +16,16 @@ function load_data() {
 
 	$users = array();
 	$data = fopen($data_file, "r");
-	while(!feof($data)) {
-		// Replace \n in every line and get array {user => pass}
-  		$line = explode( $hash_method,str_replace("\n","",fgets($data)) );
-		if( count($line) > 1 ){
-			$users[$line[0]] = $line[1];
+	if ($data !== False){
+		while(!feof($data)) {
+			// Replace \n in every line and get array {user => pass}
+  			$line = explode( $hash_method,str_replace("\n","",fgets($data)) );
+			if( count($line) > 1 ){
+				$users[$line[0]] = $line[1];
+			}
 		}
+		fclose($data);
 	}
-	fclose($data);
-
 	return $users;
 }
 
