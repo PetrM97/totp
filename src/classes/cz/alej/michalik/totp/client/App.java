@@ -18,11 +18,10 @@ package cz.alej.michalik.totp.client;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Toolkit;
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Properties;
 
 import javax.swing.BoxLayout;
@@ -38,8 +37,7 @@ import javax.swing.JViewport;
  *
  */
 public class App {
-
-	private final static String PATH = "client.properties";
+	private final static String FILENAME = "client.properties";
 	public final static float FONT_SIZE = 48f;
 	public static final Color COLOR = new Color(255, 255, 255);
 	// Záznamy
@@ -90,12 +88,14 @@ public class App {
 	public static void loadProperties() {
 		System.out.println("Překresluji");
 		// Vytvoří soubor při prvním spuštění
-		if (new File(PATH).exists() == false) {
+		try {
+			System.out.println("Read: " + App.class.getResource("/" + FILENAME).toString());
+		} catch (NullPointerException e) {
 			saveProperties();
 		}
 		// Načte nastavení ze souboru
 		try {
-			p.load(new FileReader(PATH));
+			p.load(App.class.getResourceAsStream("/" + FILENAME));
 		} catch (FileNotFoundException e) {
 			// Soubor nenalezen
 			e.printStackTrace();
@@ -129,8 +129,14 @@ public class App {
 	 * Uloží nastavení do souboru
 	 */
 	public static void saveProperties() {
+		System.out.println("Trying to save file");
 		try {
-			p.store(new FileWriter(PATH), "TOTP save file");
+			// Získám relativní cestu - složka ve které běží spuštěná aplikace
+			String dir = App.class.getResource("/").getFile();
+			OutputStream os = new FileOutputStream(dir + FILENAME);
+			// Ulozim
+			p.store(os, "TOTP save file");
+			System.out.println("Created file in " + dir);
 		} catch (IOException e) {
 			// Chyba při ukládání
 			e.printStackTrace();
