@@ -77,7 +77,7 @@ public class OtpPanel extends JPanel {
 		// Tlačítko pro smazání
 		JButton delete = new JButton("X");
 		try {
-			String path = "/material-design-icons/action/drawable-xxxhdpi/ic_delete_black_18dp.png";
+			String path = "/material-design-icons/action/drawable-xhdpi/ic_delete_black_24dp.png";
 			Image img = ImageIO.read(App.class.getResource(path));
 			delete.setIcon(new ImageIcon(img));
 			delete.setText("");

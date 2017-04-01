@@ -21,20 +21,13 @@ import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 import java.util.Properties;
 
 import javax.imageio.ImageIO;
-import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
-
-import org.apache.commons.codec.binary.Base32;
 
 /**
  * Přidá panel s pluskem pro přidání nového záznamu
@@ -63,7 +56,7 @@ public class AddPanel extends JPanel {
 		plus.setFont(plus.getFont().deriveFont(App.FONT_SIZE));
 		plus.setBackground(App.COLOR);
 		try {
-			String path = "/material-design-icons/content/drawable-xxxhdpi/ic_add_circle_black_18dp.png";
+			String path = "/material-design-icons/content/drawable-xhdpi/ic_add_circle_black_36dp.png";
 			Image img = ImageIO.read(App.class.getResource(path));
 			plus.setIcon(new ImageIcon(img));
 			plus.setText("");
@@ -81,118 +74,9 @@ public class AddPanel extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// Okno
-				System.out.println("Pridat novy zaznam");
-				dialog = new JFrame("Přidat");
-				dialog.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-				dialog.setMinimumSize(new Dimension(600, 150));
-				dialog.setLayout(new BoxLayout(dialog.getContentPane(), BoxLayout.X_AXIS));
-				dialog.setLocationByPlatform(true);
+				dialog = new AddDialog(prop);
 
-				// Pole pro pojmenování záznamu
-				dialog.add(new JLabel("Název: "));
-				final JTextField name = new JTextField();
-				dialog.add(name);
-
-				// Pole pro zadání sdíleného hesla
-				dialog.add(new JLabel("Heslo: "));
-				final JTextField secret = new JTextField();
-				dialog.add(secret);
-
-				dialog.setVisible(true);
-
-				// Akce pro odeslání formuláře
-				ActionListener submit = new ActionListener() {
-					@Override
-					public void actionPerformed(ActionEvent e) {
-						submit(prop, name, secret);
-					}
-				};
-
-				// Při stisku klávesy Enter odešle formulář
-				name.addActionListener(submit);
-				secret.addActionListener(submit);
-
-				// Při zavření okna odešle formulář
-				dialog.addWindowListener(new WindowListener() {
-
-					@Override
-					public void windowOpened(WindowEvent e) {
-						// Ignorovat
-
-					}
-
-					@Override
-					public void windowIconified(WindowEvent e) {
-						// Ignorovat
-
-					}
-
-					@Override
-					public void windowDeiconified(WindowEvent e) {
-						// Ignorovat
-
-					}
-
-					@Override
-					public void windowDeactivated(WindowEvent e) {
-						// Ignorovat
-
-					}
-
-					@Override
-					public void windowClosing(WindowEvent e) {
-						// Odeslat
-						submit(prop, name, secret);
-
-					}
-
-					@Override
-					public void windowClosed(WindowEvent e) {
-						// Ignorovat
-
-					}
-
-					@Override
-					public void windowActivated(WindowEvent e) {
-						// Ignorovat
-
-					}
-				});
 			}
 		});
 	}
-
-	/**
-	 * Odešle nový záznam
-	 * 
-	 * @param prop
-	 *            Properties
-	 * @param name
-	 *            Textové pole s jménem
-	 * @param secret
-	 *            Textové pole s heslem
-	 */
-	private void submit(final Properties prop, final JTextField name, final JTextField secret) {
-		System.out.printf("Jméno: %s | Heslo: %s\n", name.getText(), secret.getText());
-		if (name.getText().equals("") || secret.getText().equals("")) {
-			System.out.println("Nepřidáno");
-		} else {
-			System.out.printf("Base32 heslo je: %s\n", new Base32().encodeToString(secret.getText().getBytes()));
-			int id = prop.size();
-			// Po odstranění může být některý index přeskočen
-			while (prop.containsKey(String.valueOf(id))) {
-				id++;
-			}
-			StringBuilder sb = new StringBuilder();
-			// Záznam je ve tvaru "jméno;heslo"
-			sb.append(name.getText());
-			sb.append(";");
-			sb.append(secret.getText());
-			prop.setProperty(String.valueOf(id), sb.toString());
-			App.saveProperties();
-			App.loadProperties();
-		}
-		dialog.dispose();
-	}
-
 }

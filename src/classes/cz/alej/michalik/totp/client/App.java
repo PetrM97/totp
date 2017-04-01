@@ -65,7 +65,7 @@ public class App {
 		window.setLocationByPlatform(true);
 		// Nastavím ikonu
 		try {
-			String path = "/material-design-icons/action/drawable-xxxhdpi/ic_lock_black_48dp.png";
+			String path = "/material-design-icons/action/drawable-xhdpi/ic_lock_black_48dp.png";
 			window.setIconImage(Toolkit.getDefaultToolkit().getImage(App.class.getResource(path)));
 		} catch (NullPointerException e) {
 			System.out.println("Icon not found");

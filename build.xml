@@ -140,7 +140,7 @@
 			<!-- Include libraries -->
 			<zipgroupfileset includes="*.jar" dir="./lib" />
 			<fileset dir="."> 
-				<include name="/material-design-icons/**/drawable-xxxhdpi/*black_*.png"/>
+				<include name="/material-design-icons/**/drawable-xhdpi/*black_*.png"/>
 			</fileset>
 		</jar>
 	</target>
