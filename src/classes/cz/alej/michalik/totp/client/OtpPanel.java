@@ -96,6 +96,8 @@ public class OtpPanel extends JPanel {
 		passPanel.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				System.out.println("Generuji kod pro " + data[1]);
+				System.out.println(new Base32().decode(data[1].getBytes()).length);
 				clip.set(new TOTP(new Base32().decode(data[1].getBytes())).toString());
 				System.out.printf("Kód pro %s je ve schránce\n", data[0]);
 				passPanel.setText("Zkopírováno");

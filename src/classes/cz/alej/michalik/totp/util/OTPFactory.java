@@ -25,7 +25,7 @@ public class OTPFactory {
 
 	// Výchozí hodnoty
 	int digits = 6;
-	String alg = "HmacSHA1";
+	public static String alg = "HmacSHA1";
 	int step = 30;
 	long counter = 0;
 
@@ -56,7 +56,7 @@ public class OTPFactory {
 	 * @return sebe
 	 */
 	public OTPFactory setAlgorithm(String algorithm) {
-		this.alg = algorithm;
+		OTPFactory.alg = algorithm;
 		return this;
 	}
 

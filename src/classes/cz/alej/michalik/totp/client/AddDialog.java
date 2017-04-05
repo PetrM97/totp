@@ -31,7 +31,10 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 import org.apache.commons.codec.binary.Base32;
 
@@ -46,8 +49,8 @@ public class AddDialog extends JFrame {
 	public AddDialog(final Properties prop) {
 		System.out.println("Pridat novy zaznam");
 		this.setTitle("Přidat");
-		this.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-		this.setMinimumSize(new Dimension(900, 150));
+		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		this.setMinimumSize(new Dimension(600, 150));
 		this.setLocationByPlatform(true);
 		// Panel pro vytvoření okrajů
 		JPanel panel = new JPanel();
@@ -122,13 +125,36 @@ public class AddDialog extends JFrame {
 		ActionListener submit = new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				submit(prop, name, secret);
+				submit(prop, name, secret, false);
 			}
 		};
 
 		// Při stisku klávesy Enter odešle formulář
 		name.addActionListener(submit);
 		secret.addActionListener(submit);
+		// Při změně pole pro heslo se vstup okamžitě zformátuje
+		final Runnable sanitizer = new Runnable() {
+			@Override
+			public void run() {
+				sanitize(secret);
+
+			}
+		};
+		secret.getDocument().addDocumentListener(new DocumentListener() {
+
+			@Override
+			public void removeUpdate(DocumentEvent e) {
+			}
+
+			@Override
+			public void insertUpdate(DocumentEvent e) {
+				SwingUtilities.invokeLater(sanitizer);
+			}
+
+			@Override
+			public void changedUpdate(DocumentEvent e) {
+			}
+		});
 
 		// Při zavření okna odešle formulář
 		this.addWindowListener(new WindowListener() {
@@ -160,7 +186,7 @@ public class AddDialog extends JFrame {
 			@Override
 			public void windowClosing(WindowEvent e) {
 				// Odeslat
-				submit(prop, name, secret);
+				submit(prop, name, secret, true);
 
 			}
 
@@ -187,11 +213,16 @@ public class AddDialog extends JFrame {
 	 *            Textové pole s jménem
 	 * @param secret
 	 *            Textové pole s heslem
+	 * @param exitOnError
+	 *            Zavře okno i při chybě, pokud uživatel klikne na křížek
 	 */
-	private void submit(final Properties prop, final JTextField name, final JTextField secret) {
+	private void submit(final Properties prop, final JTextField name, final JTextField secret, boolean exitOnError) {
 		System.out.printf("Jméno: %s | Heslo: %s\n", name.getText(), secret.getText());
-		if (name.getText().equals("") || secret.getText().equals("")) {
+		boolean error = false;
+		sanitize(secret);
+		if (name.getText().equals("") || secret.getText().equals("") || !verify(secret.getText())) {
 			System.out.println("Nepřidáno");
+			error = true;
 		} else {
 			System.out.printf("Base32 heslo je: %s\n", new Base32().encodeToString(secret.getText().getBytes()));
 			int id = prop.size();
@@ -208,6 +239,41 @@ public class AddDialog extends JFrame {
 			App.saveProperties();
 			App.loadProperties();
 		}
-		this.dispose();
+		if (exitOnError || !error) {
+			this.dispose();
+		}
+	}
+
+	/**
+	 * Ověří zda je sdílené heslo platné
+	 * 
+	 * @param text
+	 * @return platnost
+	 */
+	private boolean verify(String text) {
+		System.out.println("Testuji retezec " + text);
+		String key = new Base32().decode(text.getBytes()).toString();
+		System.out.println(text + " -> " + key);
+		System.out.println(new Base32().decode(text.getBytes()).length);
+		// Pokud třída Base32 vrátí klíč s nulovou délkou, není to platný klíč
+		if (new Base32().decode(text.getBytes()).length == 0) {
+			System.out.println("Klíč není platný");
+			return false;
+		}
+		System.out.println("Klíč je platný");
+		return true;
+	}
+
+	/**
+	 * Naformátuje sdílené heslo
+	 * 
+	 * @param secret
+	 *            textové pole se sdíleným heslem
+	 * @return
+	 */
+	private void sanitize(final JTextField secret) {
+		// Velká písmena a odstranění mezer
+		String text = secret.getText().toUpperCase().trim().replaceAll(" ", "");
+		secret.setText(text);
 	}
 }
