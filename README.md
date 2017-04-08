@@ -39,4 +39,4 @@ JAR files are then created in `/build/jar` folder
 
 ## Wiki
 
-[Github Wiki](wiki) has more details, but is written in Czech language only.
+[Github Wiki](https://github.com/PetrM97/totp/wiki) has more details, but is written in Czech language only.
