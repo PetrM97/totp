@@ -2,5 +2,15 @@ language: java
 jdk:
   - oraclejdk8
   - oraclejdk7
-
-  
+deploy:
+  - provider: pages
+    skip_cleanup: true
+    on:
+        branch: master
+    local_dir: docs
+  - provider: releases
+    file_glob: true
+    file: build/jar/*
+    skip_cleanup: true
+    on:
+        tags: true

@@ -92,7 +92,7 @@
 		</javac>
 	</target>
 
-	<target name="test" depends="compile" description="jUnit tests">
+	<target name="test" depends="jar, doc" description="jUnit tests">
 		<delete dir="${testreport.dir}" />
 		<mkdir dir="${testreport.dir}" />
 		<mkdir dir="${testreport.dir}/xml" />
@@ -116,16 +116,10 @@
 	</target>
 
 	<target name="doc" description="generate javadocs">
-		<copy todir="img">
-			<fileset dir="${doc.dir}/img"/>
-		</copy>
-		<delete dir="${doc.dir}" />
-		<mkdir dir="${doc.dir}" />
-		<copy todir="${doc.dir}/img">
-			<fileset dir="img"/>
-		</copy>
-		<delete dir="img"/>
-		<javadoc sourcepath="${classes.dir}" destdir="${doc.dir}" encoding="UTF-8" charset="UTF-8" docencoding="UTF-8" classpath="${lib.dir}/*" />
+		<delete>
+			<fileset dir="${doc.dir}" includes="cz" excludes="img/*, overview.html"/>
+		</delete>
+		<javadoc sourcepath="${classes.dir}" destdir="${doc.dir}" encoding="UTF-8" charset="UTF-8" docencoding="UTF-8" classpath="${lib.dir}/*" overview="${doc.dir}/overview.html"/>
 	</target>
 
 	<target name="jar" depends="jar-client,jar-server" description="create both .jar files"></target>
@@ -138,7 +132,8 @@
 				<attribute name="Class-Path" value="." />
 			</manifest>
 			<!-- Include libraries -->
-			<zipgroupfileset includes="*.jar" dir="./lib" />
+			<zipgroupfileset excludes="*javadoc*,*sources*,*ivy*,*junit*,*hamcrest*,*json*,*restlet*" dir="lib" />
+			<!-- and icons -->
 			<fileset dir="."> 
 				<include name="/material-design-icons/**/drawable-xhdpi/*black_*.png"/>
 			</fileset>
@@ -153,9 +148,8 @@
 					<attribute name="Class-Path" value="." />
 				</manifest>
 				<!-- Include libraries -->
-				<zipgroupfileset includes="*.jar" dir="./lib" />
+				<zipgroupfileset excludes="*javadoc*,*sources*,*ivy*,*junit*,*hamcrest*," dir="lib" />
 			</jar>
-
 		</target>
 
 	<target name="run" depends="jar-client" description="run client .jar file">
