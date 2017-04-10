@@ -71,7 +71,8 @@ public class App {
 			System.out.println("Icon not found");
 		}
 
-		p.setProperty("-1", "Test;GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ");
+		// Testovací záznam
+		// p.setProperty("-1", "Test;GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ");
 
 		// Načte uložené hodnoty
 		loadProperties();

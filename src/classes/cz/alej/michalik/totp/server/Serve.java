@@ -37,6 +37,7 @@ public class Serve {
 	 * Vytvoří nový server
 	 * 
 	 * @param args
+	 *            číslo portu (nepovinné)
 	 * @throws Exception
 	 */
 	public static void main(String[] args) throws Exception {

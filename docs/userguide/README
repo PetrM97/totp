@@ -1,0 +1,4 @@
+Soubor prirucka.md byl vytvořen spojením souborů z wiki 
+https://github.com/PetrM97/totp/wiki, který byl poté pomocí programu 
+Grip (https://github.com/joeyespo/grip) překonvertován na .html soubor a ten
+pak byl vložen do .tex souboru.

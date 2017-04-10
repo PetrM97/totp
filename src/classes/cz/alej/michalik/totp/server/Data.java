@@ -44,7 +44,7 @@ public class Data {
 			e.printStackTrace();
 		}
 		// Demo ukázka
-		p.put("demo", "GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ");
+		// p.put("demo", "GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ");
 		return p;
 	}
 

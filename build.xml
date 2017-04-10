@@ -92,7 +92,7 @@
 		</javac>
 	</target>
 
-	<target name="test" depends="jar, doc" description="jUnit tests">
+	<target name="test" depends="jar, docs" description="jUnit tests">
 		<delete dir="${testreport.dir}" />
 		<mkdir dir="${testreport.dir}" />
 		<mkdir dir="${testreport.dir}/xml" />
@@ -115,9 +115,9 @@
 		</junitreport>
 	</target>
 
-	<target name="doc" description="generate javadocs">
+	<target name="docs" description="generate javadocs">
 		<delete>
-			<fileset dir="${doc.dir}" includes="cz" excludes="img/*, overview.html"/>
+			<fileset dir="${doc.dir}" includes="cz" excludes="img/*, overview.html, userguide/*"/>
 		</delete>
 		<javadoc sourcepath="${classes.dir}" destdir="${doc.dir}" encoding="UTF-8" charset="UTF-8" docencoding="UTF-8" classpath="${lib.dir}/*" overview="${doc.dir}/overview.html"/>
 	</target>

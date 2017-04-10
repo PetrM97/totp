@@ -19,10 +19,22 @@ import java.util.Scanner;
 
 import cz.alej.michalik.totp.util.OTPFactory;
 
+/**
+ * Třída pro generování jednorázových kódů v prostředí příkazové řádky
+ * 
+ * @author Petr Michalík
+ *
+ */
 public class CLI {
 
 	private static String otp = "TOTP";
 
+	/**
+	 * Vrátí jednorázový kód
+	 * 
+	 * @param args
+	 *            sdílená hesla oddělená novým řádkem
+	 */
 	public static void main(String[] args) {
 
 		Scanner in = new Scanner(System.in);

@@ -15,6 +15,7 @@
 */
 package cz.alej.michalik.totp.client;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -33,6 +34,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
+import javax.swing.border.EtchedBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
@@ -220,7 +222,7 @@ public class AddDialog extends JFrame {
 		System.out.printf("Jméno: %s | Heslo: %s\n", name.getText(), secret.getText());
 		boolean error = false;
 		sanitize(secret);
-		if (name.getText().equals("") || secret.getText().equals("") || !verify(secret.getText())) {
+		if (name.getText().equals("") || secret.getText().equals("") || !verify(secret)) {
 			System.out.println("Nepřidáno");
 			error = true;
 		} else {
@@ -250,14 +252,13 @@ public class AddDialog extends JFrame {
 	 * @param text
 	 * @return platnost
 	 */
-	private boolean verify(String text) {
-		System.out.println("Testuji retezec " + text);
-		String key = new Base32().decode(text.getBytes()).toString();
-		System.out.println(text + " -> " + key);
-		System.out.println(new Base32().decode(text.getBytes()).length);
+	private boolean verify(JTextField text) {
+		System.out.println("Testuji retezec " + text.getText());
 		// Pokud třída Base32 vrátí klíč s nulovou délkou, není to platný klíč
-		if (new Base32().decode(text.getBytes()).length == 0) {
+		if (new Base32().decode(text.getText().getBytes()).length == 0) {
 			System.out.println("Klíč není platný");
+			// Zvyraznim okraje
+			text.setBorder(new EtchedBorder(new Color(255, 0, 0), new Color(250, 50, 50)));
 			return false;
 		}
 		System.out.println("Klíč je platný");
