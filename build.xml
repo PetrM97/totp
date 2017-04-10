@@ -135,7 +135,7 @@
 			<zipgroupfileset excludes="*javadoc*,*sources*,*ivy*,*junit*,*hamcrest*,*json*,*restlet*" dir="lib" />
 			<!-- and icons -->
 			<fileset dir="."> 
-				<include name="/material-design-icons/**/drawable-xhdpi/*black_*.png"/>
+				<include name="material-design-icons/**/drawable-xhdpi/*black_*.png"/>
 			</fileset>
 		</jar>
 	</target>

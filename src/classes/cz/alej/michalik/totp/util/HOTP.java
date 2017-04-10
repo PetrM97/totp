@@ -162,6 +162,8 @@ public class HOTP implements OTP {
 	 * @return HOTP heslo jako int
 	 */
 	public int get() {
+		// Tato část kódu je upravená referenční implementace z
+		// https://tools.ietf.org/html/rfc4226#page-27
 		byte[] hmac_result = hmac.get();
 		// Offset je hodnota posledních 4 bitů z posledního bytu
 		// K rozdeleni pouziju bitovou operaci
