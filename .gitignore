@@ -65,5 +65,3 @@ local.properties
 
 # Code Recommenders
 .recommenders/
-
-*.htpasswd
